@@ -25,7 +25,7 @@ const ImagePickerTask = () => {
     setSelectedImage(null);
   };
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+    <View style={{alignItems:'center'}}>
       {selectedImage ? (
         <View style={styles.container}>
           <TouchableOpacity onPress={closeImage}>
@@ -43,6 +43,7 @@ const ImagePickerTask = () => {
             padding: 10,
             backgroundColor: 'lightblue',
             marginBottom: 20,
+            marginTop:20,
           }}>
           <Text>Select Image</Text>
         </TouchableOpacity>

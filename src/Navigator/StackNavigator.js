@@ -9,6 +9,7 @@ import Welcome from '../screen/welcome';
 import DrawerNavigators from './DrawerNavigator';
 import ForgotScreen from '../screen/Forgot';
 import Menu from '../screen/Menu';
+import AddItems from '../database/AddItems';
 
 const Stack = createNativeStackNavigator();
 
@@ -76,6 +77,13 @@ const StackNavigator = () => {
           component={Menu}
           options={{
             title: 'Menu',
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="AddItems"
+          component={AddItems}
+          options={{
             headerShown: false,
           }}
         />

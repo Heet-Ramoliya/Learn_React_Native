@@ -31,6 +31,7 @@ import Audio from '../components/Audio';
 import Videotask from '../components/Video';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import AddItems from '../database/AddItems';
 
 const Drawer = createDrawerNavigator();
 
@@ -58,6 +59,8 @@ const DrawerNavigators = ({navigation}) => {
           ),
         }}
       />
+      <Drawer.Screen name="AddItems" component={AddItems} />
+
       <Drawer.Screen
         name="ActivityIndicator_task1"
         component={ActivityIndicator_task1}

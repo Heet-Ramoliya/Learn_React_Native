@@ -80,9 +80,9 @@ const Login = ({navigation}) => {
     navigateForget();
   };
 
-  const navigateLogin = () => {
-    navigation.navigate('SignupPage');
-  };
+  // const navigateLogin = () => {
+  //   navigation.navigate('SignupPage');
+  // };
 
   // <View style={{flex: 1, justifyContent: 'center'}}>
   //   <View>

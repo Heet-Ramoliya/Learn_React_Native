@@ -1,9 +1,14 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {View, Text, SectionList, Image, StyleSheet} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {createTable, insertUser} from '../database/dbOperations';
 
 const SectionList_task = () => {
+  useEffect(() => {
+    createTable();
+  }, []);
+
   const menu = [
     {
       id: 1,
