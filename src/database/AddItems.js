@@ -2,25 +2,48 @@ import {View, Text, TextInput, StyleSheet} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import ImagePickerTask from '../components/ImagePicker';
-import {createTable, insertUser} from '../database/dbOperations';
+import {insertUser, updateUser} from '../database/dbOperations';
 
-const AddItems = ({navigation}) => {
+const AddItems = ({navigation, route}) => {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [imgURL, setImgURL] = useState('');
 
-  const addItemInDatabase = () => {
-    insertUser(name, price, imgURL);
-    navigationtohome();
+  const {itemid, mode, itemname, itemprice} = route.params || {
+    itemid: null,
+    mode: 'add',
   };
+  const isEditMode = mode === 'update';
+
+  useEffect(() => {
+    if (isEditMode || itemid === itemid) {
+      setName(itemname);
+      setPrice(itemprice);
+    }
+  }, []);
+
+  const handleSubmit = () => {
+    if (isEditMode) {
+      updateUser(name, price, itemid);
+    } else {
+      insertUser(name, price, imgURL);
+    }
+    navigation.navigate('FlatList');
+  };
+
+  // const addItemInDatabase = () => {
+  //   insertUser(name, price, imgURL);
+  //   navigationtohome();
+  // };
 
   const handleImageSelect = imageUri => {
     setImgURL(imageUri);
   };
 
-  const navigationtohome = () => {
-    navigation.navigate('welcomePage');
-  };
+  // const updateDataInDatabase = () => {
+  //   updateUser(itemname, itemprice, itemid);
+  //   navigationtohome();
+  // };
 
   return (
     <View
@@ -47,10 +70,10 @@ const AddItems = ({navigation}) => {
           onChangeText={text => setPrice(text)}
         />
       </View>
-      <ImagePickerTask onImageSelected={handleImageSelect} />
+      <ImagePickerTask onImageSelect={handleImageSelect} />
 
       <TouchableOpacity
-        onPress={addItemInDatabase}
+        onPress={handleSubmit}
         style={{
           paddingHorizontal: 10,
           backgroundColor: 'black',
@@ -69,7 +92,7 @@ const AddItems = ({navigation}) => {
             padding: 10,
             fontWeight: '500',
           }}>
-          Submit
+          {isEditMode ? 'Update' : 'Add'}
         </Text>
       </TouchableOpacity>
     </View>

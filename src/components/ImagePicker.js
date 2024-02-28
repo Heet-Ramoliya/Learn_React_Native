@@ -3,7 +3,7 @@ import React from 'react';
 import ImagePicker from 'react-native-image-crop-picker';
 import {useState} from 'react';
 
-const ImagePickerTask = () => {
+const ImagePickerTask = ({onImageSelect}) => {
   const [selectedImage, setSelectedImage] = useState(null);
 
   const selectImage = () => {
@@ -15,6 +15,7 @@ const ImagePickerTask = () => {
       .then(image => {
         console.log(image);
         setSelectedImage(image.path);
+        onImageSelect(image.path);
       })
       .catch(error => {
         console.log(error);
@@ -25,7 +26,7 @@ const ImagePickerTask = () => {
     setSelectedImage(null);
   };
   return (
-    <View style={{alignItems:'center'}}>
+    <View style={{alignItems: 'center'}}>
       {selectedImage ? (
         <View style={styles.container}>
           <TouchableOpacity onPress={closeImage}>
@@ -43,7 +44,7 @@ const ImagePickerTask = () => {
             padding: 10,
             backgroundColor: 'lightblue',
             marginBottom: 20,
-            marginTop:20,
+            marginTop: 20,
           }}>
           <Text>Select Image</Text>
         </TouchableOpacity>

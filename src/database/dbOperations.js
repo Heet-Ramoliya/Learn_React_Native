@@ -29,3 +29,19 @@ export const insertUser = (name, price, image) => {
     );
   });
 };
+
+export const updateUser = (name, price, id) => {
+  db.transaction(tx => {
+    tx.executeSql(
+      'UPDATE Users SET name=? , price=? WHERE id=?',
+      [name, price, id],
+      (tx, results) => {
+        if (results.rowsAffected > 0) {
+          console.log('User updated successfully!');
+        } else {
+          console.log('User not found or no changes made');
+        }
+      },
+    );
+  });
+};

@@ -10,6 +10,7 @@ import DrawerNavigators from './DrawerNavigator';
 import ForgotScreen from '../screen/Forgot';
 import Menu from '../screen/Menu';
 import AddItems from '../database/AddItems';
+import FlatList_task from '../components/FlatList';
 
 const Stack = createNativeStackNavigator();
 
@@ -83,6 +84,14 @@ const StackNavigator = () => {
         <Stack.Screen
           name="AddItems"
           component={AddItems}
+          options={{
+            headerShown: false,
+          }}
+        />
+
+        <Stack.Screen
+          name="FlatList"
+          component={FlatList_task}
           options={{
             headerShown: false,
           }}
