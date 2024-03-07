@@ -1,34 +1,70 @@
-import {View, Text, TextInput, StyleSheet} from 'react-native';
+import {View, Text, TextInput, StyleSheet, ToastAndroid} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import ImagePickerTask from '../components/ImagePicker';
-import {insertUser, updateUser} from '../database/dbOperations';
+import {insertProduct, insertUser, updateUser} from '../database/dbOperations';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import db from './database';
 
 const AddItems = ({navigation, route}) => {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [imgURL, setImgURL] = useState('');
-
-  const {itemid, mode, itemname, itemprice} = route.params || {
-    itemid: null,
-    mode: 'add',
-  };
-  const isEditMode = mode === 'update';
+  const [storedUserId, setStoredUserId] = useState('');
 
   useEffect(() => {
-    if (isEditMode || itemid === itemid) {
-      setName(itemname);
-      setPrice(itemprice);
-    }
-  }, []);
+    const getUserIdFromStorage = async () => {
+      try {
+        const id = await AsyncStorage.getItem('userId');
+        if (id !== null) {
+          setStoredUserId(id);
+        }
+        setName('');
+        setPrice('');
+        setImgURL('');
+      } catch (error) {
+        console.error('Error retrieving userId from AsyncStorage:', error);
+      }
+    };
 
-  const handleSubmit = () => {
-    if (isEditMode) {
-      updateUser(name, price, itemid);
-    } else {
-      insertUser(name, price, imgURL);
-    }
-    navigation.navigate('FlatList');
+    getUserIdFromStorage();
+  }, [storedUserId]);
+
+  // const {userId} = route.params;
+
+  // const {itemid, mode, itemname, itemprice, itemimage} = route.params || {
+  //   itemid: null,
+  //   mode: 'add',
+  // };
+  // const isEditMode = mode === 'update';
+
+  // useEffect(() => {
+  //   if (isEditMode || itemid) {
+  //     setName(itemname);
+  //     setPrice(itemprice);
+  //     setImgURL(itemimage);
+  //   }
+  // }, [itemid]);
+
+  const handleSubmit = async () => {
+    insertProduct(storedUserId, name, price, imgURL);
+    navigation.navigate('myProduct');
+    setName('');
+    setPrice('');
+    setImgURL('');
+    // if (isEditMode) {
+    //   updateUser(name, price, imgURL, itemid);
+    //   setName('');
+    //   setPrice('');
+    //   setImgURL('');
+    //   navigation.navigate('FlatList', {mode: 'add'});
+    // } else {
+    //   insertUser(name, price, imgURL);
+    //   // setName('');
+    //   // setPrice('');
+    //   // setImgURL('');
+    //   navigation.navigate('FlatList');
+    // }
   };
 
   // const addItemInDatabase = () => {
@@ -92,7 +128,8 @@ const AddItems = ({navigation, route}) => {
             padding: 10,
             fontWeight: '500',
           }}>
-          {isEditMode ? 'Update' : 'Add'}
+          Submit
+          {/* {isEditMode ? 'Update' : 'Add'} */}
         </Text>
       </TouchableOpacity>
     </View>

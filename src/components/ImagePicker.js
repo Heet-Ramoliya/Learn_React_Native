@@ -24,6 +24,7 @@ const ImagePickerTask = ({onImageSelect}) => {
 
   const closeImage = () => {
     setSelectedImage(null);
+    onImageSelect(null);
   };
   return (
     <View style={{alignItems: 'center'}}>

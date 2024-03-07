@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import Switch_task from '../components/Switch';
 import MySlider from '../components/Slider';
@@ -11,7 +11,6 @@ import Modal_task from '../components/Modal';
 import Pressable_task from '../components/Pressable';
 import RefreshControl_task from '../components/RefreshControler';
 import ScrollViewExample from '../components/ScrollViewExample';
-import SectionList_task from '../components/SectionList';
 import StatusBar_task from '../components/StatusBar';
 import TouchableHeighlight_task from '../components/TouchableHeighlight';
 import TochableWithOutFeedback_task from '../components/TochableWithOutFeedback';
@@ -32,10 +31,13 @@ import Videotask from '../components/Video';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import AddItems from '../database/AddItems';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Drawer = createDrawerNavigator();
 
-const DrawerNavigators = ({navigation}) => {
+const DrawerNavigators = ({navigation, route}) => {
+  // const {userId} = route.params;
+
   const signout = () => {
     navigation.navigate('LoginPage');
   };
@@ -44,7 +46,9 @@ const DrawerNavigators = ({navigation}) => {
       <Drawer.Screen
         name="TabNavigator"
         component={TabNavigator}
+        // initialParams={{userId: userId}}
         options={{
+          title: 'Products',
           headerRight: () => (
             <>
               <TouchableOpacity onPress={signout}>
@@ -59,7 +63,11 @@ const DrawerNavigators = ({navigation}) => {
           ),
         }}
       />
-      <Drawer.Screen name="AddItems" component={AddItems} />
+      <Drawer.Screen
+        name="AddItems"
+        component={AddItems}
+        // initialParams={{userId: userId}}
+      />
 
       <Drawer.Screen
         name="ActivityIndicator_task1"
@@ -79,7 +87,6 @@ const DrawerNavigators = ({navigation}) => {
         component={RefreshControl_task}
       />
       <Drawer.Screen name="ScrollViewExample" component={ScrollViewExample} />
-      <Drawer.Screen name="SectionList_task" component={SectionList_task} />
       <Drawer.Screen name="StatusBar_task" component={StatusBar_task} />
       <Drawer.Screen name="Switch" component={Switch_task} />
       <Drawer.Screen

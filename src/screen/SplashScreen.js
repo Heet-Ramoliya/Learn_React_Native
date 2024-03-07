@@ -8,12 +8,14 @@ import {
 } from 'react-native';
 import React, {useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {createTable} from '../database/dbOperations';
 
 export default function SplashScreen({navigation}) {
   useEffect(() => {
+    createTable();
     const timer = setTimeout(() => {
       checkToken();
-      // navigation.replace('homePage');
+      navigation.replace('homePage');
     }, 4000);
     return () => clearTimeout(timer);
   });

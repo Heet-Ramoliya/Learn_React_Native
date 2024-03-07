@@ -6,13 +6,12 @@ import {
   ToastAndroid,
   TouchableOpacity,
   Image,
-  KeyboardAvoidingView,
-  Dimensions,
 } from 'react-native';
 import {useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import db from '../database/database';
 
 const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -23,42 +22,87 @@ const Login = ({navigation}) => {
     setShowpassword(!showpassword);
   };
 
+  // const handleLogin = async () => {
+  //   try {
+  //     const userData = await AsyncStorage.getItem('userData');
+  //     if (userData) {
+  //       const storeData = JSON.parse(userData);
+  //       if (storeData.email === email && storeData.password === password) {
+  //         await AsyncStorage.setItem('sessionToken', '12345');
+  //         navigation.navigate('DrawerNavigators');
+  //       } else if (email === '') {
+  //         ToastAndroid.show(
+  //           'Please enter email address',
+  //           ToastAndroid.SHORT,
+  //           ToastAndroid.TOP,
+  //         );
+  //       } else if (password === '') {
+  //         ToastAndroid.show(
+  //           'Please enter password ',
+  //           ToastAndroid.SHORT,
+  //           ToastAndroid.TOP,
+  //         );
+  //       } else {
+  //         ToastAndroid.show(
+  //           'Invalid email or password',
+  //           ToastAndroid.SHORT,
+  //           ToastAndroid.TOP,
+  //         );
+  //       }
+  //     } else {
+  //       ToastAndroid.show(
+  //         'No user data found. Please sign up first.',
+  //         ToastAndroid.SHORT,
+  //         ToastAndroid.TOP,
+  //       );
+  //     }
+  //   } catch (error) {
+  //     console.error('error', error);
+  //   }
+  // };
+
   const handleLogin = async () => {
     try {
-      const userData = await AsyncStorage.getItem('userData');
-      if (userData) {
-        const storeData = JSON.parse(userData);
-        if (storeData.email === email && storeData.password === password) {
-          await AsyncStorage.setItem('sessionToken', '12345');
-          navigation.navigate('DrawerNavigators');
-        } else if (email === '') {
-          ToastAndroid.show(
-            'Please enter email address',
-            ToastAndroid.SHORT,
-            ToastAndroid.TOP,
-          );
-        } else if (password === '') {
-          ToastAndroid.show(
-            'Please enter password ',
-            ToastAndroid.SHORT,
-            ToastAndroid.TOP,
-          );
-        } else {
-          ToastAndroid.show(
-            'Invalid email or password',
-            ToastAndroid.SHORT,
-            ToastAndroid.TOP,
-          );
-        }
-      } else {
-        ToastAndroid.show(
-          'No user data found. Please sign up first.',
-          ToastAndroid.SHORT,
-          ToastAndroid.TOP,
+      db.transaction(tx => {
+        tx.executeSql(
+          ' SELECT userId, email, password FROM Users WHERE email =? AND password =?',
+          [email, password],
+          (tx, result) => {
+            if (result && result.rows.length > 0) {
+              const userId = result.rows.item(0).userId;
+              // const finalUserId = JSON.stringify(userId);
+              AsyncStorage.setItem('userId', userId.toString());
+              navigation.navigate('DrawerNavigators');
+              AsyncStorage.setItem('sessionToken', '12345');
+            } else if (email === '') {
+              ToastAndroid.show(
+                'Please enter email address',
+                ToastAndroid.SHORT,
+                ToastAndroid.TOP,
+              );
+            } else if (password === '') {
+              ToastAndroid.show(
+                'Please enter password address',
+                ToastAndroid.SHORT,
+                ToastAndroid.TOP,
+              );
+            } else {
+              ToastAndroid.show(
+                'Invalid email and password',
+                ToastAndroid.SHORT,
+                ToastAndroid.TOP,
+              );
+            }
+          },
         );
-      }
+      });
     } catch (error) {
-      console.error('error', error);
+      console.log('error', error);
+      ToastAndroid.show(
+        'An error occurred. Please try again later.',
+        ToastAndroid.SHORT,
+        ToastAndroid.TOP,
+      );
     }
   };
 

@@ -1,12 +1,27 @@
+import {ToastAndroid} from 'react-native/types';
 import db from './database';
 
+//Create Table of database
 export const createTable = () => {
   db.transaction(tx => {
+    //Users Table
     tx.executeSql(
-      'CREATE TABLE IF NOT EXISTS Users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL , price INTEGER NOT NULL, image TEXT NOT NULL )',
+      'CREATE TABLE IF NOT EXISTS Users (userId INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT NOT NULL, password TEXT NOT NULL)',
       [],
       (tx, results) => {
-        console.log('Table create successfully');
+        console.log('Users Table create successfully');
+      },
+      error => {
+        console.log('Error creating table:', error);
+      },
+    );
+
+    //Products Table
+    tx.executeSql(
+      'CREATE TABLE IF NOT EXISTS Products (id INTEGER PRIMARY KEY AUTOINCREMENT,userId INTEGER , name TEXT NOT NULL , price INTEGER NOT NULL, image TEXT NOT NULL, FOREIGN KEY (userId) REFERENCES Users(userId))',
+      [],
+      (tx, results) => {
+        console.log('Products Table create successfully');
       },
       error => {
         console.log('Error creating table:', error);
@@ -15,13 +30,15 @@ export const createTable = () => {
   });
 };
 
-export const insertUser = (name, price, image) => {
+//insert Product into database
+export const insertProduct = (userId, name, price, image) => {
   db.transaction(tx => {
     tx.executeSql(
-      'INSERT INTO Users (name,price,image) VALUES (?, ?, ?)',
-      [name, price, image],
+      'INSERT INTO Products (userId,name,price,image) VALUES (?, ?, ?, ?)',
+      [userId, name, price, image],
       (tx, results) => {
-        console.log('Record inserted successfully');
+        console.log('Product inserted successfully');
+        console.log(userId);
       },
       error => {
         console.log('Error inserting record:', error);
@@ -30,11 +47,11 @@ export const insertUser = (name, price, image) => {
   });
 };
 
-export const updateUser = (name, price, id) => {
+export const updateUser = (name, price, image, id) => {
   db.transaction(tx => {
     tx.executeSql(
-      'UPDATE Users SET name=? , price=? WHERE id=?',
-      [name, price, id],
+      'UPDATE Users SET name=? , price=? , image=? WHERE id=?',
+      [name, price, image, id],
       (tx, results) => {
         if (results.rowsAffected > 0) {
           console.log('User updated successfully!');
@@ -45,3 +62,5 @@ export const updateUser = (name, price, id) => {
     );
   });
 };
+
+export const getUser = () => {};

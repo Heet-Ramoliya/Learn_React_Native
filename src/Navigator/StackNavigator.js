@@ -11,6 +11,9 @@ import ForgotScreen from '../screen/Forgot';
 import Menu from '../screen/Menu';
 import AddItems from '../database/AddItems';
 import FlatList_task from '../components/FlatList';
+import MyProduct from '../screen/myProduct';
+import TabNavigator from './TabNavigator';
+import AllProducts from '../screen/allProducts';
 
 const Stack = createNativeStackNavigator();
 
@@ -92,6 +95,30 @@ const StackNavigator = () => {
         <Stack.Screen
           name="FlatList"
           component={FlatList_task}
+          options={{
+            headerShown: false,
+          }}
+        />
+
+        <Stack.Screen
+          name="TabNavigator"
+          component={TabNavigator}
+          options={{
+            headerShown: false,
+          }}
+        />
+
+        <Stack.Screen
+          name="myProduct"
+          component={MyProduct}
+          options={{
+            headerShown: true,
+          }}
+        />
+
+        <Stack.Screen
+          name="AllProducts"
+          component={AllProducts}
           options={{
             headerShown: false,
           }}

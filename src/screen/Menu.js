@@ -1,11 +1,11 @@
 import {View, Text} from 'react-native';
 import React from 'react';
-import SectionList_task from '../components/SectionList';
+import AllProducts from './allProducts';
 
 const Menu = () => {
   return (
     <View>
-      <SectionList_task />
+      <AllProducts />
     </View>
   );
 };

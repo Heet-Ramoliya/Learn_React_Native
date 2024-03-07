@@ -1,34 +1,41 @@
-import {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, FlatList, Image} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import db from '../database/database';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import Icons from 'react-native-vector-icons/FontAwesome5';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import {TouchableOpacity} from 'react-native-gesture-handler';
-
-const FlatList_task = ({navigation}) => {
+const MyProduct = ({navigation, route}) => {
+  // const {userId} = route.params;
   const [menulist, setMenulist] = useState([]);
+  const [storedUserId, setStoredUserId] = useState('');
 
   useEffect(() => {
-    db.transaction(tx => {
-      tx.executeSql('SELECT * FROM Users', [], (tx, results) => {
-        var temp = [];
-        for (let i = 0; i < results.rows.length; ++i) {
-          temp.push(results.rows.item(i));
-        }
-        console.log(temp);
-        setMenulist(temp);
-      });
-    });
-  }, []);
+    getUserIdFromStorage();
 
-  const deleteUser = id => {
     db.transaction(tx => {
-      tx.executeSql('DELETE FROM Users WHERE id = ?', [id], (tx, results) => {
-        console.log('User delete successfully!');
-        setMenulist(prevList => prevList.filter(user => user.id !== id));
-      });
+      tx.executeSql(
+        'SELECT * FROM Products WHERE userId=?',
+        [storedUserId],
+        (tx, results) => {
+          var temp = [];
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i));
+          }
+          setMenulist(temp);
+        },
+      );
     });
+  }, [storedUserId]);
+
+  const getUserIdFromStorage = async () => {
+    try {
+      const id = await AsyncStorage.getItem('userId');
+      console.log('myproduct :=', id);
+      if (id !== null) {
+        setStoredUserId(id);
+      }
+    } catch (error) {
+      console.error('Error retrieving userId from AsyncStorage:', error);
+    }
   };
 
   let listItemView = item => {
@@ -42,7 +49,6 @@ const FlatList_task = ({navigation}) => {
             marginHorizontal: 5,
             margin: 5,
             backgroundColor: 'rgba(236,240,245,255)',
-            justifyContent: 'space-between',
           }}>
           {item.image && (
             <Image
@@ -60,9 +66,9 @@ const FlatList_task = ({navigation}) => {
           )}
           <View style={{flexDirection: 'column', padding: 5}}>
             <Text style={styles.text}>Name: {item.name}</Text>
-            <Text style={styles.text}>Price: {item.price}</Text>
+            <Text style={styles.text}>Price: ₹{item.price}</Text>
           </View>
-          <View
+          {/* <View
             style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -88,7 +94,7 @@ const FlatList_task = ({navigation}) => {
             <TouchableOpacity onPress={() => deleteUser(item.id)}>
               <Icon name="delete" size={30} color="black" />
             </TouchableOpacity>
-          </View>
+          </View> */}
         </View>
       </>
     );
@@ -112,4 +118,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FlatList_task;
+export default MyProduct;

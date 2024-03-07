@@ -10,39 +10,36 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {insertUsersEmailAndPassword} from '../database/dbOperations';
+import db from '../database/database';
 
 const SignUp = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [Password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const userData = {
-    email: email,
-    password: Password,
-  };
+  // const storeDate = async () => {
+  //   try {
+  //     await AsyncStorage.setItem('userData', JSON.stringify(userData));
+  //   } catch {
+  //     error => {
+  //       console.log(error);
+  //     };
+  //   }
+  // };
 
-  const storeDate = async () => {
-    try {
-      await AsyncStorage.setItem('userData', JSON.stringify(userData));
-    } catch {
-      error => {
-        console.log(error);
-      };
-    }
-  };
-
-  const showData = async () => {
-    try {
-      const jsonvalue = await AsyncStorage.getItem('userData');
-      alldata = jsonvalue != null ? JSON.parse(jsonvalue) : null;
-      console.log('Stored Data:', alldata);
-      return alldata;
-    } catch {
-      error => {
-        console.log(error);
-      };
-    }
-  };
+  // const showData = async () => {
+  //   try {
+  //     const jsonvalue = await AsyncStorage.getItem('userData');
+  //     alldata = jsonvalue != null ? JSON.parse(jsonvalue) : null;
+  //     console.log('Stored Data:', alldata);
+  //     return alldata;
+  //   } catch {
+  //     error => {
+  //       console.log(error);
+  //     };
+  //   }
+  // };
 
   const navigateToLogin = () => {
     navigation.navigate('LoginPage');
@@ -50,13 +47,36 @@ const SignUp = ({navigation}) => {
 
   const handleSignup = () => {
     if (Password === confirmPassword && Password != '' && email != '') {
-      storeDate();
-      showData();
-      navigateToLogin();
+      // const userData = {
+      //   email: email,
+      //   password: Password,
+      // };
+
+      db.transaction(tx => {
+        tx.executeSql(
+          'INSERT INTO Users (email,password) VALUES (?, ?)',
+          [email, Password],
+          (tx, results) => {
+            if (results.rowsAffected > 0) {
+              ToastAndroid.show(
+                'User signed up successfully',
+                ToastAndroid.SHORT,
+              );
+              console.log("User email and password add in database successfully")
+              navigateToLogin();
+            } else {
+              ToastAndroid.show('Failed to sign up', ToastAndroid.SHORT);
+            }
+          },
+          error => {
+            console.log('Error inserting record:', error);
+            ToastAndroid.show('Failed to sign up', ToastAndroid.SHORT);
+          },
+        );
+      });
     } else {
       ToastAndroid.show(
-        'password is not match',
-        ToastAndroid.TOP,
+        'Password is not matched or fields are empty',
         ToastAndroid.SHORT,
       );
     }
