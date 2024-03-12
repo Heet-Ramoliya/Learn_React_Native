@@ -31,6 +31,7 @@ import Videotask from '../components/Video';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import AddItems from '../database/AddItems';
+import {View} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Drawer = createDrawerNavigator();
@@ -51,14 +52,25 @@ const DrawerNavigators = ({navigation, route}) => {
           title: 'Products',
           headerRight: () => (
             <>
-              <TouchableOpacity onPress={signout}>
-                <Icon
-                  name="sign-out"
-                  size={30}
-                  color="black"
-                  style={{padding: 12}}
-                />
-              </TouchableOpacity>
+              <View style={{flexDirection: 'row'}}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('AddToCart')}>
+                  <Icon
+                    name="shopping-cart"
+                    size={30}
+                    color="black"
+                    style={{padding: 12}}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={signout}>
+                  <Icon
+                    name="sign-out"
+                    size={30}
+                    color="black"
+                    style={{padding: 12}}
+                  />
+                </TouchableOpacity>
+              </View>
             </>
           ),
         }}

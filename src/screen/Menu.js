@@ -2,7 +2,7 @@ import {View, Text} from 'react-native';
 import React from 'react';
 import AllProducts from './allProducts';
 
-const Menu = () => {
+const Menu = ({navigation}) => {
   return (
     <View>
       <AllProducts />

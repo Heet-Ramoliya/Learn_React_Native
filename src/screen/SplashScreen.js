@@ -23,7 +23,6 @@ export default function SplashScreen({navigation}) {
   const checkToken = async () => {
     try {
       const token = await AsyncStorage.getItem('sessionToken');
-      console.log('Token :-', token);
       if (token) {
         navigation.navigate('DrawerNavigators');
       } else {

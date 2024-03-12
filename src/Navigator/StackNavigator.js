@@ -14,6 +14,7 @@ import FlatList_task from '../components/FlatList';
 import MyProduct from '../screen/myProduct';
 import TabNavigator from './TabNavigator';
 import AllProducts from '../screen/allProducts';
+import AddToCart from '../screen/AddToCart';
 
 const Stack = createNativeStackNavigator();
 
@@ -105,6 +106,14 @@ const StackNavigator = () => {
           component={TabNavigator}
           options={{
             headerShown: false,
+          }}
+        />
+
+        <Stack.Screen
+          name="AddToCart"
+          component={AddToCart}
+          options={{
+            headerShown: true,
           }}
         />
 

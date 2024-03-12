@@ -7,9 +7,13 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {createTable, insertUser} from '../database/dbOperations';
 import db from '../database/database';
 
-const AllProducts = () => {
-  const [allProduct, setAllproduct] = useState();
+const AllProducts = ({navigation, route}) => {
+  const [allProduct, setAllproduct] = useState([]);
   useEffect(() => {
+    getAllProducts();
+  }, []);
+
+  const getAllProducts = async () => {
     db.transaction(tx => {
       tx.executeSql('SELECT * FROM Products', [], (tx, results) => {
         var temp = [];
@@ -20,51 +24,7 @@ const AllProducts = () => {
         setMenulist(temp);
       });
     });
-  }, []);
-
-  // const menu = [
-  //   {
-  //     category: 'Burger',
-  //     data: [
-  //       {
-  //         Name: 'McVeggie Burger',
-  //         image:
-  //           'https://media.istockphoto.com/id/520410807/photo/cheeseburger.jpg?s=612x612&w=0&k=20&c=fG_OrCzR5HkJGI8RXBk76NwxxTasMb1qpTVlEM0oyg4=',
-  //         price: 69,
-  //       },
-  //       {
-  //         Name: 'Veg Surprise',
-  //         image:
-  //           'https://media-cdn.grubhub.com/image/upload/d_search:browse-images:default.jpg/w_150,q_80,fl_lossy,dpr_2.0,c_fill,f_auto,h_100/dkpwnegyrattycplukos',
-  //         price: 119,
-  //       },
-  //       {
-  //         Name: 'McSpicy Paneer Burger',
-  //         image:
-  //           'https://www.mcdonaldsindia.com/trulyindianburger/images/chicken-maharaja-mac.png',
-  //         price: 59,
-  //       },
-  //       {
-  //         Name: 'Veg Maharaja Mac Burger',
-  //         image:
-  //           'https://www.mcdonalds.com.my/storage/foods/September2019/lojYE6LgUCgHSTdBHxC1.png',
-  //         price: 89,
-  //       },
-  //       {
-  //         Name: 'Burger Veg Combo',
-  //         image:
-  //           'https://mcdonalds.com.pk/wp-content/uploads/2022/08/10-McCrispy-178x178.png',
-  //         price: 179,
-  //       },
-  //       {
-  //         Name: 'Cheese Burger Meal',
-  //         image:
-  //           'https://images.deliveryhero.io/image/talabat/Menuitems/double_mcchicken_meal638107839466177373.jpg',
-  //         price: 199,
-  //       },
-  //     ],
-  //   },
-  // ];
+  };
 
   const [count, setCount] = useState({});
 
@@ -79,6 +39,25 @@ const AllProducts = () => {
       return {...prevCounts, [id]: Math.max((prevCounts[id] || 0) - 1, 0)};
     });
   };
+
+  // const addToCart = async item => {
+  //   try {
+  //     const existingItems = await AsyncStorage.getItem('cartItems');
+  //     console.log('existingItems ==> ', existingItems);
+  //     var cartdata = [];
+
+  //     if (existingItems) {
+  //       cartdata = JSON.parse(existingItems);
+  //       console.log('cartdata ==> ', cartdata);
+  //     }
+  //     cartdata.push(item);
+  //     console.log('after push ==> ', cartdata);
+  //     await AsyncStorage.setItem('cartItems', JSON.stringify(cartdata));
+  //   } catch (error) {
+  //     console.log('Error storing item to cart:', error);
+  //   }
+  // };
+
   return (
     <View>
       <FlatList
@@ -158,6 +137,14 @@ const AllProducts = () => {
                       </Text>
                     </TouchableOpacity>
                   </View>
+                </View>
+                <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate('AddToCart', {name: 'heet'});
+                    }}>
+                    <Icon name="cart-plus" size={30} color="black" />
+                  </TouchableOpacity>
                 </View>
               </View>
             </View>

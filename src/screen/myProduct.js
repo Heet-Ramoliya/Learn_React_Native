@@ -24,12 +24,11 @@ const MyProduct = ({navigation, route}) => {
         },
       );
     });
-  }, [storedUserId]);
+  }, [storedUserId, menulist]);
 
   const getUserIdFromStorage = async () => {
     try {
       const id = await AsyncStorage.getItem('userId');
-      console.log('myproduct :=', id);
       if (id !== null) {
         setStoredUserId(id);
       }

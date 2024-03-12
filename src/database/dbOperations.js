@@ -8,9 +8,7 @@ export const createTable = () => {
     tx.executeSql(
       'CREATE TABLE IF NOT EXISTS Users (userId INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT NOT NULL, password TEXT NOT NULL)',
       [],
-      (tx, results) => {
-        console.log('Users Table create successfully');
-      },
+      (tx, results) => {},
       error => {
         console.log('Error creating table:', error);
       },
@@ -20,9 +18,7 @@ export const createTable = () => {
     tx.executeSql(
       'CREATE TABLE IF NOT EXISTS Products (id INTEGER PRIMARY KEY AUTOINCREMENT,userId INTEGER , name TEXT NOT NULL , price INTEGER NOT NULL, image TEXT NOT NULL, FOREIGN KEY (userId) REFERENCES Users(userId))',
       [],
-      (tx, results) => {
-        console.log('Products Table create successfully');
-      },
+      (tx, results) => {},
       error => {
         console.log('Error creating table:', error);
       },
