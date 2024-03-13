@@ -13,7 +13,7 @@ import AddItems from '../database/AddItems';
 import FlatList_task from '../components/FlatList';
 import MyProduct from '../screen/myProduct';
 import TabNavigator from './TabNavigator';
-import AllProducts from '../screen/allProducts';
+import AllProducts from '../screen/AllProducts';
 import AddToCart from '../screen/AddToCart';
 
 const Stack = createNativeStackNavigator();
@@ -110,14 +110,6 @@ const StackNavigator = () => {
         />
 
         <Stack.Screen
-          name="AddToCart"
-          component={AddToCart}
-          options={{
-            headerShown: true,
-          }}
-        />
-
-        <Stack.Screen
           name="myProduct"
           component={MyProduct}
           options={{
@@ -130,6 +122,14 @@ const StackNavigator = () => {
           component={AllProducts}
           options={{
             headerShown: false,
+          }}
+        />
+
+        <Stack.Screen
+          name="AddToCart"
+          component={AddToCart}
+          options={{
+            headerShown: true,
           }}
         />
       </Stack.Navigator>

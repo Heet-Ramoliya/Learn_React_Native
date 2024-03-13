@@ -23,6 +23,16 @@ export const createTable = () => {
         console.log('Error creating table:', error);
       },
     );
+
+    //CartItems Table
+    tx.executeSql(
+      'CREATE TABLE IF NOT EXISTS CartItems (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT,price TEXT,image TEXT,quantity INTEGER)',
+    ),
+      [],
+      (tx, results) => {},
+      error => {
+        console.log('Error creating table:', error);
+      };
   });
 };
 
@@ -35,6 +45,22 @@ export const insertProduct = (userId, name, price, image) => {
       (tx, results) => {
         console.log('Product inserted successfully');
         console.log(userId);
+      },
+      error => {
+        console.log('Error inserting record:', error);
+      },
+    );
+  });
+};
+
+//insert Product into CartItems table
+export const insertIntoCartItems = (name, price, image, quantity) => {
+  db.transaction(tx => {
+    tx.executeSql(
+      'INSERT INTO CartItems (name,price,image,quantity) VALUES (?, ?, ?, ?)',
+      [name, price, image, quantity],
+      (tx, results) => {
+        console.log('Product add into Cart successfully');
       },
       error => {
         console.log('Error inserting record:', error);

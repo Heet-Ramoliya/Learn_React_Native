@@ -1,20 +1,16 @@
-import {View, Text} from 'react-native';
 import React from 'react';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import SectionList_task from '../screen/allProducts';
-import Menu from '../screen/Menu';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import MyProduct from '../screen/myProduct';
+import AllProducts from '../screen/AllProducts';
 
 const Tab = createMaterialTopTabNavigator();
 
-const TabNavigator = ({navigation, route}) => {
-  // const {userId} = route.params;
+const TabNavigator = () => {
   return (
     <Tab.Navigator>
       <Tab.Screen
-        name="Menu"
-        component={Menu}
+        name="AllProducts"
+        component={AllProducts}
         options={{title: 'All Products'}}
       />
       <Tab.Screen

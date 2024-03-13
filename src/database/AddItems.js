@@ -2,7 +2,7 @@ import {View, Text, TextInput, StyleSheet, ToastAndroid} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import ImagePickerTask from '../components/ImagePicker';
-import {insertProduct, insertUser, updateUser} from '../database/dbOperations';
+import {insertProduct} from '../database/dbOperations';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import db from './database';
 

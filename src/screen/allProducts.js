@@ -2,12 +2,11 @@ import {useEffect, useState} from 'react';
 import {View, Text, SectionList, Image, StyleSheet} from 'react-native';
 import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {createTable, insertUser} from '../database/dbOperations';
 import db from '../database/database';
+import {insertIntoCartItems} from '../database/dbOperations';
 
-const AllProducts = ({navigation, route}) => {
+const AllProducts = ({navigation}) => {
   const [allProduct, setAllproduct] = useState([]);
   useEffect(() => {
     getAllProducts();
@@ -30,13 +29,13 @@ const AllProducts = ({navigation, route}) => {
 
   const increase = id => {
     setCount(prevCounts => {
-      return {...prevCounts, [id]: (prevCounts[id] || 0) + 1};
+      return {...prevCounts, [id]: (prevCounts[id] || 1) + 1};
     });
   };
 
   const decrease = id => {
     setCount(prevCounts => {
-      return {...prevCounts, [id]: Math.max((prevCounts[id] || 0) - 1, 0)};
+      return {...prevCounts, [id]: Math.max((prevCounts[id] || 1) - 1, 0)};
     });
   };
 
@@ -118,7 +117,7 @@ const AllProducts = ({navigation, route}) => {
                           color: 'black',
                           fontSize: 18,
                         }}>
-                        {count[item.id] || 0}
+                        {count[item.id] || 1}
                       </Text>
                     </View>
                     <TouchableOpacity
@@ -141,7 +140,18 @@ const AllProducts = ({navigation, route}) => {
                 <View style={{justifyContent: 'center', alignItems: 'center'}}>
                   <TouchableOpacity
                     onPress={() => {
-                      navigation.navigate('AddToCart', {name: 'heet'});
+                      insertIntoCartItems(
+                        item.name,
+                        item.price,
+                        item.image,
+                        count[item.id] || 1,
+                      );
+                      navigation.navigate('AddToCart', {
+                        name: item.name,
+                        price: item.price,
+                        image: item.image,
+                        quantity: count[item.id] || 1,
+                      });
                     }}>
                     <Icon name="cart-plus" size={30} color="black" />
                   </TouchableOpacity>

@@ -1,6 +1,6 @@
 import {View, Text} from 'react-native';
 import React from 'react';
-import AllProducts from './allProducts';
+import AllProducts from './AllProducts';
 
 const Menu = ({navigation}) => {
   return (
