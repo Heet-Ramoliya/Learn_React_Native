@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -70,6 +70,7 @@ const Login = ({navigation}) => {
           (tx, result) => {
             if (result && result.rows.length > 0) {
               const userId = result.rows.item(0).userId;
+              console.log('Login Page UserId ==> ', userId);
               // const finalUserId = JSON.stringify(userId);
               AsyncStorage.setItem('userId', userId.toString());
               navigation.navigate('DrawerNavigators');

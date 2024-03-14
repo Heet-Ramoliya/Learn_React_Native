@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {View, Text, SectionList, Image, StyleSheet} from 'react-native';
+import {View, Text, Image, StyleSheet} from 'react-native';
 import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -8,9 +8,15 @@ import {insertIntoCartItems} from '../database/dbOperations';
 
 const AllProducts = ({navigation}) => {
   const [allProduct, setAllproduct] = useState([]);
+  const [storedUserId, setStoredUserId] = useState('');
+
   useEffect(() => {
-    getAllProducts();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      getUserIdFromStorage();
+      getAllProducts();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   const getAllProducts = async () => {
     db.transaction(tx => {
@@ -20,9 +26,20 @@ const AllProducts = ({navigation}) => {
           temp.push(results.rows.item(i));
           setAllproduct(temp);
         }
-        setMenulist(temp);
+        // setMenulist(temp);
       });
     });
+  };
+
+  const getUserIdFromStorage = async () => {
+    try {
+      const id = await AsyncStorage.getItem('userId');
+      if (id !== null) {
+        setStoredUserId(id);
+      }
+    } catch (error) {
+      console.error('Error retrieving userId from AsyncStorage:', error);
+    }
   };
 
   const [count, setCount] = useState({});
@@ -39,26 +56,9 @@ const AllProducts = ({navigation}) => {
     });
   };
 
-  // const addToCart = async item => {
-  //   try {
-  //     const existingItems = await AsyncStorage.getItem('cartItems');
-  //     console.log('existingItems ==> ', existingItems);
-  //     var cartdata = [];
-
-  //     if (existingItems) {
-  //       cartdata = JSON.parse(existingItems);
-  //       console.log('cartdata ==> ', cartdata);
-  //     }
-  //     cartdata.push(item);
-  //     console.log('after push ==> ', cartdata);
-  //     await AsyncStorage.setItem('cartItems', JSON.stringify(cartdata));
-  //   } catch (error) {
-  //     console.log('Error storing item to cart:', error);
-  //   }
-  // };
-
   return (
     <View>
+      {console.log('User ID ==> ', storedUserId)}
       <FlatList
         data={allProduct}
         renderItem={({item}) => (
@@ -141,17 +141,13 @@ const AllProducts = ({navigation}) => {
                   <TouchableOpacity
                     onPress={() => {
                       insertIntoCartItems(
+                        storedUserId,
                         item.name,
                         item.price,
                         item.image,
                         count[item.id] || 1,
                       );
-                      navigation.navigate('AddToCart', {
-                        name: item.name,
-                        price: item.price,
-                        image: item.image,
-                        quantity: count[item.id] || 1,
-                      });
+                      navigation.navigate('AddToCart');
                     }}>
                     <Icon name="cart-plus" size={30} color="black" />
                   </TouchableOpacity>

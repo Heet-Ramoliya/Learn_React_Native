@@ -26,7 +26,7 @@ export const createTable = () => {
 
     //CartItems Table
     tx.executeSql(
-      'CREATE TABLE IF NOT EXISTS CartItems (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT,price TEXT,image TEXT,quantity INTEGER)',
+      'CREATE TABLE IF NOT EXISTS CartItems (id INTEGER PRIMARY KEY AUTOINCREMENT,userId INTEGER,name TEXT,price TEXT,image TEXT,quantity INTEGER,FOREIGN KEY (userId) REFERENCES Users(userId))',
     ),
       [],
       (tx, results) => {},
@@ -44,7 +44,7 @@ export const insertProduct = (userId, name, price, image) => {
       [userId, name, price, image],
       (tx, results) => {
         console.log('Product inserted successfully');
-        console.log(userId);
+        console.log('database ==> ', userId);
       },
       error => {
         console.log('Error inserting record:', error);
@@ -54,11 +54,11 @@ export const insertProduct = (userId, name, price, image) => {
 };
 
 //insert Product into CartItems table
-export const insertIntoCartItems = (name, price, image, quantity) => {
+export const insertIntoCartItems = (userId, name, price, image, quantity) => {
   db.transaction(tx => {
     tx.executeSql(
-      'INSERT INTO CartItems (name,price,image,quantity) VALUES (?, ?, ?, ?)',
-      [name, price, image, quantity],
+      'INSERT INTO CartItems (userId,name,price,image,quantity) VALUES (?, ?, ?, ?, ?)',
+      [userId, name, price, image, quantity],
       (tx, results) => {
         console.log('Product add into Cart successfully');
       },
