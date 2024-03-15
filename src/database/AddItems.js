@@ -30,7 +30,6 @@ const AddItems = ({navigation, route}) => {
     getUserIdFromStorage();
   }, [storedUserId]);
 
-
   // const {itemid, mode, itemname, itemprice, itemimage} = route.params || {
   //   itemid: null,
   //   mode: 'add',

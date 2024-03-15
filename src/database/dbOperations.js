@@ -44,7 +44,6 @@ export const insertProduct = (userId, name, price, image) => {
       [userId, name, price, image],
       (tx, results) => {
         console.log('Product inserted successfully');
-        console.log('database ==> ', userId);
       },
       error => {
         console.log('Error inserting record:', error);
@@ -84,5 +83,3 @@ export const updateUser = (name, price, image, id) => {
     );
   });
 };
-
-export const getUser = () => {};

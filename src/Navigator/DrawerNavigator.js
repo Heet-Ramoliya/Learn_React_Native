@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Switch_task from '../components/Switch';
 import MySlider from '../components/Slider';
 import ActivityIndicator_task1 from '../components/ActivityIndicator';
@@ -36,17 +37,20 @@ import {View} from 'react-native';
 const Drawer = createDrawerNavigator();
 
 const DrawerNavigators = ({navigation, route}) => {
-  // const {userId} = route.params;
-
-  const signout = () => {
-    navigation.navigate('LoginPage');
+  const signout = async () => {
+    try {
+      await AsyncStorage.removeItem('userId');
+      console.log('AsyncStorage item "id" has been removed.');
+      navigation.navigate('LoginPage');
+    } catch (error) {
+      console.error('Error removing AsyncStorage item:', error);
+    }
   };
   return (
     <Drawer.Navigator>
       <Drawer.Screen
         name="TabNavigator"
         component={TabNavigator}
-        // initialParams={{userId: userId}}
         options={{
           title: 'Products',
           headerRight: () => (
@@ -74,17 +78,13 @@ const DrawerNavigators = ({navigation, route}) => {
           ),
         }}
       />
-      <Drawer.Screen
-        name="AddItems"
-        component={AddItems}
-        // initialParams={{userId: userId}}
-      />
+      <Drawer.Screen name="AddItems" component={AddItems} />
 
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="ActivityIndicator_task1"
         component={ActivityIndicator_task1}
-      />
-      <Drawer.Screen name="FlatList" component={FlatList_task} />
+      /> */}
+      {/* <Drawer.Screen name="FlatList" component={FlatList_task} />
       <Drawer.Screen name="Image" component={Image_task} />
       <Drawer.Screen name="BackgroundImage" component={BackgroundImage} />
       <Drawer.Screen
@@ -121,7 +121,7 @@ const DrawerNavigators = ({navigation, route}) => {
       <Drawer.Screen name="ToastMessage" component={ToastMessage} />
       <Drawer.Screen name="AnimatedExample" component={AnimatedExample} />
       <Drawer.Screen name="Audio" component={Audio} />
-      <Drawer.Screen name="Videotask" component={Videotask} />
+      <Drawer.Screen name="Videotask" component={Videotask} /> */}
     </Drawer.Navigator>
   );
 };

@@ -12,7 +12,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const MyProduct = ({navigation, route}) => {
-  // const {userId} = route.params;
   const [menulist, setMenulist] = useState([]);
   const [storedUserId, setStoredUserId] = useState('');
 
@@ -45,65 +44,36 @@ const MyProduct = ({navigation, route}) => {
     }
   };
 
-  let listItemView = item => {
+  const listItemView = item => {
     return (
-      <>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            borderWidth: 1,
-            marginHorizontal: 5,
-            margin: 5,
-            backgroundColor: 'rgba(236,240,245,255)',
-          }}>
-          {item.image && (
-            <Image
-              source={{
-                uri: item.image,
-              }}
-              style={{
-                height: 100,
-                width: 100,
-                resizeMode: 'cover',
-                borderRadius: 20,
-                margin: 20,
-              }}
-            />
-          )}
-          <View style={{flexDirection: 'column', padding: 5}}>
-            <Text style={styles.text}>Name: {item.name}</Text>
-            <Text style={styles.text}>Price: ₹{item.price}</Text>
-          </View>
-          {/* <View
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          borderWidth: 1,
+          marginHorizontal: 5,
+          margin: 5,
+          backgroundColor: 'rgba(236,240,245,255)',
+        }}>
+        {item.image && (
+          <Image
+            source={{
+              uri: item.image,
+            }}
             style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              padding: 6,
-            }}>
-            <TouchableOpacity>
-              <Icons
-                name="edit"
-                size={23}
-                color="black"
-                onPress={() =>
-                  navigation.navigate('AddItems', {
-                    itemid: item.id,
-                    itemname: item.name.toString(),
-                    itemprice: item.price.toString(),
-                    itemimage: item.image,
-                    mode: 'update',
-                  })
-                }
-              />
-            </TouchableOpacity>
-            <View style={{marginHorizontal: 5}}></View>
-            <TouchableOpacity onPress={() => deleteUser(item.id)}>
-              <Icon name="delete" size={30} color="black" />
-            </TouchableOpacity>
-          </View> */}
+              height: 100,
+              width: 100,
+              resizeMode: 'cover',
+              borderRadius: 20,
+              margin: 20,
+            }}
+          />
+        )}
+        <View style={{flexDirection: 'column', padding: 5}}>
+          <Text style={styles.text}>Name: {item.name}</Text>
+          <Text style={styles.text}>Price: ₹{item.price}</Text>
         </View>
-      </>
+      </View>
     );
   };
 

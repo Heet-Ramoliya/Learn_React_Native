@@ -1,7 +1,9 @@
+import React from 'react';
 import {useEffect, useState} from 'react';
 import {View, Text, Image, StyleSheet} from 'react-native';
 import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useFocusEffect} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import db from '../database/database';
 import {insertIntoCartItems} from '../database/dbOperations';
@@ -11,12 +13,17 @@ const AllProducts = ({navigation}) => {
   const [storedUserId, setStoredUserId] = useState('');
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      getUserIdFromStorage();
-      getAllProducts();
-    });
-    return unsubscribe;
-  }, [navigation]);
+    getUserIdFromStorage();
+    getAllProducts();
+  }, [storedUserId, count]);
+
+  // const deleteUser = () => {
+  //   db.transaction(tx => {
+  //     tx.executeSql('DELETE FROM Products WHERE id = 8', [], (tx, results) => {
+  //       console.log('User delete successfully!');
+  //     });
+  //   });
+  // };
 
   const getAllProducts = async () => {
     db.transaction(tx => {
@@ -34,6 +41,7 @@ const AllProducts = ({navigation}) => {
   const getUserIdFromStorage = async () => {
     try {
       const id = await AsyncStorage.getItem('userId');
+      console.log('UserId ==>', id);
       if (id !== null) {
         setStoredUserId(id);
       }
@@ -42,23 +50,28 @@ const AllProducts = ({navigation}) => {
     }
   };
 
+  useFocusEffect(
+    React.useCallback(() => {
+      getUserIdFromStorage();
+    }, []),
+  );
+
   const [count, setCount] = useState({});
 
   const increase = id => {
     setCount(prevCounts => {
-      return {...prevCounts, [id]: (prevCounts[id] || 1) + 1};
+      return {...prevCounts, [id]: (prevCounts[id] || 0) + 1};
     });
   };
 
   const decrease = id => {
     setCount(prevCounts => {
-      return {...prevCounts, [id]: Math.max((prevCounts[id] || 1) - 1, 0)};
+      return {...prevCounts, [id]: Math.max((prevCounts[id] || 0) - 1, 0)};
     });
   };
 
   return (
     <View>
-      {console.log('User ID ==> ', storedUserId)}
       <FlatList
         data={allProduct}
         renderItem={({item}) => (
@@ -117,7 +130,7 @@ const AllProducts = ({navigation}) => {
                           color: 'black',
                           fontSize: 18,
                         }}>
-                        {count[item.id] || 1}
+                        {count[item.id] || 0}
                       </Text>
                     </View>
                     <TouchableOpacity
@@ -145,8 +158,9 @@ const AllProducts = ({navigation}) => {
                         item.name,
                         item.price,
                         item.image,
-                        count[item.id] || 1,
+                        count[item.id] || 0,
                       );
+
                       navigation.navigate('AddToCart');
                     }}>
                     <Icon name="cart-plus" size={30} color="black" />

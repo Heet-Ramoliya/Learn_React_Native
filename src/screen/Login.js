@@ -22,45 +22,6 @@ const Login = ({navigation}) => {
     setShowpassword(!showpassword);
   };
 
-  // const handleLogin = async () => {
-  //   try {
-  //     const userData = await AsyncStorage.getItem('userData');
-  //     if (userData) {
-  //       const storeData = JSON.parse(userData);
-  //       if (storeData.email === email && storeData.password === password) {
-  //         await AsyncStorage.setItem('sessionToken', '12345');
-  //         navigation.navigate('DrawerNavigators');
-  //       } else if (email === '') {
-  //         ToastAndroid.show(
-  //           'Please enter email address',
-  //           ToastAndroid.SHORT,
-  //           ToastAndroid.TOP,
-  //         );
-  //       } else if (password === '') {
-  //         ToastAndroid.show(
-  //           'Please enter password ',
-  //           ToastAndroid.SHORT,
-  //           ToastAndroid.TOP,
-  //         );
-  //       } else {
-  //         ToastAndroid.show(
-  //           'Invalid email or password',
-  //           ToastAndroid.SHORT,
-  //           ToastAndroid.TOP,
-  //         );
-  //       }
-  //     } else {
-  //       ToastAndroid.show(
-  //         'No user data found. Please sign up first.',
-  //         ToastAndroid.SHORT,
-  //         ToastAndroid.TOP,
-  //       );
-  //     }
-  //   } catch (error) {
-  //     console.error('error', error);
-  //   }
-  // };
-
   const handleLogin = async () => {
     try {
       db.transaction(tx => {
@@ -70,9 +31,8 @@ const Login = ({navigation}) => {
           (tx, result) => {
             if (result && result.rows.length > 0) {
               const userId = result.rows.item(0).userId;
-              console.log('Login Page UserId ==> ', userId);
-              // const finalUserId = JSON.stringify(userId);
               AsyncStorage.setItem('userId', userId.toString());
+              console.log('Login Page UserId ==> ', userId);
               navigation.navigate('DrawerNavigators');
               AsyncStorage.setItem('sessionToken', '12345');
             } else if (email === '') {

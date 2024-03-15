@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  ImageBackground,
-  StyleSheet,
-  Image,
-  StatusBar,
-} from 'react-native';
+import {View, StyleSheet, Image, StatusBar} from 'react-native';
 import React, {useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {createTable} from '../database/dbOperations';
