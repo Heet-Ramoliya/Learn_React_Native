@@ -4,18 +4,22 @@ import {View, Text, Image, StyleSheet} from 'react-native';
 import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useFocusEffect} from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import db from '../database/database';
-import {insertIntoCartItems} from '../database/dbOperations';
+import {
+  insertIntoCartItems,
+  updateCartItem,
+  deleteCartItem,
+} from '../database/dbOperations';
 
 const AllProducts = ({navigation}) => {
   const [allProduct, setAllproduct] = useState([]);
   const [storedUserId, setStoredUserId] = useState('');
+  const [cartitems, setCartitems] = useState([]);
+  const [selectedProductId, setSelectedProductId] = useState('');
 
   useEffect(() => {
-    getUserIdFromStorage();
-    getAllProducts();
-  }, [storedUserId, count]);
+    getCartItems();
+  }, [storedUserId, selectedProductId, cartitems]);
 
   // const deleteUser = () => {
   //   db.transaction(tx => {
@@ -30,11 +34,28 @@ const AllProducts = ({navigation}) => {
       tx.executeSql('SELECT * FROM Products', [], (tx, results) => {
         var temp = [];
         for (let i = 0; i < results.rows.length; ++i) {
+          const productId = results.rows.item(i).id;
+          // console.log('productId ==> ', productId);
           temp.push(results.rows.item(i));
           setAllproduct(temp);
         }
-        // setMenulist(temp);
       });
+    });
+  };
+
+  const getCartItems = async () => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM CartItems where userId=?',
+        [storedUserId],
+        (tx, results) => {
+          var temp = [];
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i));
+          }
+          setCartitems(temp);
+        },
+      );
     });
   };
 
@@ -53,22 +74,193 @@ const AllProducts = ({navigation}) => {
   useFocusEffect(
     React.useCallback(() => {
       getUserIdFromStorage();
+      getAllProducts();
     }, []),
   );
 
   const [count, setCount] = useState({});
 
-  const increase = id => {
-    setCount(prevCounts => {
-      return {...prevCounts, [id]: (prevCounts[id] || 0) + 1};
-    });
+  // const increase = (id, item) => {
+  //   setCount(prevCounts => {
+  //     const updatedCount = (prevCounts[id] || 0) + 1;
+  //     const newCounts = {...prevCounts, [id]: updatedCount};
+  //     insertIntoCartItems(
+  //       storedUserId,
+  //       selectedProductId,
+  //       item.name,
+  //       item.price,
+  //       item.image,
+  //       updatedCount,
+  //     );
+  //     return newCounts;
+  //   });
+  // };
+
+  // const increase = async (id, item) => {
+  //   console.log('------------------------------------------------');
+  //   const updatedCount = (count[id] || 0) + 1;
+  //   const newCounts = {...count, [id]: updatedCount};
+  //   setCount(newCounts);
+
+  //   console.log('cartitems ==> ', cartitems);
+
+  //   const existingCartItem = cartitems.find(
+  //     cartItem => cartItem.productId === item.id,
+  //   );
+  //   console.log('existingCartItem ==> ', existingCartItem);
+  //   // console.log('cartitem id ==> ', cartitems.productId);
+  //   if (existingCartItem) {
+  //     // console.log('existingCartItem');
+  //     updateCartItem(updatedCount, selectedProductId);
+  //     const updatedCartItems = cartitems.map(cartItem =>
+  //       cartItem.productId === item.id
+  //         ? {...cartItem, quantity: updatedCount}
+  //         : cartItem,
+  //     );
+  //     //console.log('updatedCartItems:', updatedCartItems);
+
+  //     setCartitems(updatedCartItems);
+  //   } else {
+  //     insertIntoCartItems(
+  //       storedUserId,
+  //       selectedProductId,
+  //       item.name,
+  //       item.price,
+  //       item.image,
+  //       updatedCount,
+  //     );
+  //   }
+  //   console.log('------------------------------------------------');
+  // };
+
+  const increase = async (id, item) => {
+    const updatedCount = (count[id] || 0) + 1;
+    const newCounts = {...count, [id]: updatedCount};
+    setCount(newCounts);
+
+    const existingCartItemIndex = cartitems.findIndex(
+      cartItem => cartItem.productId === item.id,
+    );
+
+    if (existingCartItemIndex !== -1) {
+      const updatedCartItems = cartitems.map((cartItem, index) =>
+        index === existingCartItemIndex
+          ? {...cartItem, quantity: updatedCount}
+          : cartItem,
+      );
+      setCartitems(updatedCartItems);
+      await updateCartItem(updatedCount, storedUserId, item.id);
+      setSelectedProductId(item.id);
+    } else {
+      insertIntoCartItems(
+        storedUserId,
+        item.id,
+        item.name,
+        item.price,
+        item.image,
+        updatedCount,
+      );
+      setSelectedProductId(item.id);
+    }
   };
 
-  const decrease = id => {
+  // const decrease = id => {
+  //   setCount(prevCounts => {
+  //     return {...prevCounts, [id]: Math.max((prevCounts[id] || 0) - 1, 0)};
+  //   });
+
+  //   setCartitems(prevCartItems => {
+  //     return prevCartItems.map(cartItem =>
+  //       cartItem.productId === id
+  //         ? {...cartItem, quantity: Math.max((cartItem.quantity || 0) - 1, 0)}
+  //         : cartItem,
+  //     );
+  //   });
+  // };
+
+  // const decrease = async id => {
+  //   setCount(prevCounts => {
+  //     const updatedCount = Math.max((prevCounts[id] || 0) - 1, 0);
+  //     const newCounts = {...prevCounts, [id]: updatedCount};
+  //     return newCounts;
+  //   });
+
+  //   const existingCartItemIndex = cartitems.findIndex(
+  //     cartItem => cartItem.productId === id,
+  //   );
+
+  //   if (existingCartItemIndex !== -1) {
+  //     const updatedCartItems = cartitems.map((cartItem, index) =>
+  //       index === existingCartItemIndex
+  //         ? {...cartItem, quantity: Math.max(cartItem.quantity - 1, 0)}
+  //         : cartItem,
+  //     );
+  //     setCartitems(updatedCartItems);
+  //     await updateCartItem(
+  //       Math.max(cartitems[existingCartItemIndex].quantity - 1, 0),
+  //       storedUserId,
+  //       id,
+  //     );
+  //   }
+  // };
+
+  const decrease = async id => {
     setCount(prevCounts => {
-      return {...prevCounts, [id]: Math.max((prevCounts[id] || 0) - 1, 0)};
+      const updatedCount = Math.max((prevCounts[id] || 0) - 1, 0);
+      const newCounts = {...prevCounts, [id]: updatedCount};
+      return newCounts;
     });
+
+    const existingCartItemIndex = cartitems.findIndex(
+      cartItem => cartItem.productId === id,
+    );
+
+    if (existingCartItemIndex !== -1) {
+      const updatedCount = Math.max(
+        cartitems[existingCartItemIndex].quantity - 1,
+        0,
+      );
+      if (updatedCount === 0) {
+        const updatedCartItems = cartitems.filter(
+          cartItem => cartItem.productId !== id,
+        );
+        setCartitems(updatedCartItems);
+        await deleteCartItem(storedUserId, id);
+      } else {
+        const updatedCartItems = cartitems.map((cartItem, index) =>
+          index === existingCartItemIndex
+            ? {...cartItem, quantity: updatedCount}
+            : cartItem,
+        );
+        setCartitems(updatedCartItems);
+        await updateCartItem(updatedCount, storedUserId, id);
+      }
+    }
   };
+
+  // using updatfunction
+  // const decrease = async id => {
+  //   setCount(prevCounts => {
+  //     return {...prevCounts, [id]: Math.max((prevCounts[id] || 0) - 1, 0)};
+  //   });
+
+  //   const existingCartItem = cartitems.find(
+  //     cartItem => cartItem.productId === id,
+  //   );
+
+  //   if (existingCartItem) {
+  //     const updatedCount = Math.max(existingCartItem.quantity - 1, 0);
+  //     const updatedCartItems = cartitems.map(cartItem =>
+  //       cartItem.productId === id
+  //         ? {...cartItem, quantity: updatedCount}
+  //         : cartItem,
+  //     );
+  //     setCartitems(updatedCartItems);
+
+  //     // Update the quantity in the database
+  //     await updateCartItem(updatedCount, storedUserId, id);
+  //   }
+  // };
 
   return (
     <View>
@@ -135,7 +327,7 @@ const AllProducts = ({navigation}) => {
                     </View>
                     <TouchableOpacity
                       onPress={() => {
-                        increase(item.id);
+                        increase(item.id, item);
                       }}
                       style={styles.button}>
                       <Text
@@ -150,7 +342,7 @@ const AllProducts = ({navigation}) => {
                     </TouchableOpacity>
                   </View>
                 </View>
-                <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                {/* <View style={{justifyContent: 'center', alignItems: 'center'}}>
                   <TouchableOpacity
                     onPress={() => {
                       insertIntoCartItems(
@@ -160,12 +352,11 @@ const AllProducts = ({navigation}) => {
                         item.image,
                         count[item.id] || 0,
                       );
-
                       navigation.navigate('AddToCart');
                     }}>
                     <Icon name="cart-plus" size={30} color="black" />
                   </TouchableOpacity>
-                </View>
+                </View> */}
               </View>
             </View>
           </>

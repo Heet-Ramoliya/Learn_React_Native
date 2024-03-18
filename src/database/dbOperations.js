@@ -26,13 +26,13 @@ export const createTable = () => {
 
     //CartItems Table
     tx.executeSql(
-      'CREATE TABLE IF NOT EXISTS CartItems (id INTEGER PRIMARY KEY AUTOINCREMENT,userId INTEGER,name TEXT,price TEXT,image TEXT,quantity INTEGER,FOREIGN KEY (userId) REFERENCES Users(userId))',
-    ),
+      'CREATE TABLE IF NOT EXISTS CartItems (id INTEGER PRIMARY KEY AUTOINCREMENT,userId INTEGER,productId INTEGER,name TEXT,price TEXT,image TEXT,quantity INTEGER,FOREIGN KEY (userId) REFERENCES Users(userId),FOREIGN KEY (productId) REFERENCES Products(id))',
       [],
       (tx, results) => {},
       error => {
         console.log('Error creating table:', error);
-      };
+      },
+    );
   });
 };
 
@@ -53,11 +53,18 @@ export const insertProduct = (userId, name, price, image) => {
 };
 
 //insert Product into CartItems table
-export const insertIntoCartItems = (userId, name, price, image, quantity) => {
+export const insertIntoCartItems = (
+  userId,
+  productId,
+  name,
+  price,
+  image,
+  quantity,
+) => {
   db.transaction(tx => {
     tx.executeSql(
-      'INSERT INTO CartItems (userId,name,price,image,quantity) VALUES (?, ?, ?, ?, ?)',
-      [userId, name, price, image, quantity],
+      'INSERT INTO CartItems (userId,productId,name,price,image,quantity) VALUES (?, ?, ?, ?, ?, ?)',
+      [userId, productId, name, price, image, quantity],
       (tx, results) => {
         console.log('Product add into Cart successfully');
       },
@@ -68,18 +75,55 @@ export const insertIntoCartItems = (userId, name, price, image, quantity) => {
   });
 };
 
-export const updateUser = (name, price, image, id) => {
-  db.transaction(tx => {
-    tx.executeSql(
-      'UPDATE Users SET name=? , price=? , image=? WHERE id=?',
-      [name, price, image, id],
-      (tx, results) => {
-        if (results.rowsAffected > 0) {
-          console.log('User updated successfully!');
-        } else {
-          console.log('User not found or no changes made');
-        }
-      },
-    );
-  });
+//update CartItem
+export const updateCartItem = async (quantity, userId, productId) => {
+  try {
+    await db.transaction(tx => {
+      tx.executeSql(
+        'UPDATE CartItems SET quantity = ? WHERE  userId = ? AND productId = ?',
+        [quantity, userId, productId],
+        (tx, results) => {
+          console.log('Cart item updated successfully');
+        },
+      );
+    });
+  } catch (error) {
+    console.error('Error updating cart item:', error);
+  }
 };
+
+//Delete cartItem data when quantity is 0
+export const deleteCartItem = async (userId, productId) => {
+  try {
+    await db.transaction(tx => {
+      tx.executeSql(
+        'DELETE FROM CartItems WHERE userId = ? AND productId =? ',
+        [userId, productId],
+        (tx, results) => {
+          console.log(
+            'cart product delete successfully :',
+            results.rowsAffected,
+          );
+        },
+      );
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// export const updateUser = (name, price, image, id) => {
+//   db.transaction(tx => {
+//     tx.executeSql(
+//       'UPDATE Users SET name=? , price=? , image=? WHERE id=?',
+//       [name, price, image, id],
+//       (tx, results) => {
+//         if (results.rowsAffected > 0) {
+//           console.log('User updated successfully!');
+//         } else {
+//           console.log('User not found or no changes made');
+//         }
+//       },
+//     );
+//   });
+// };
