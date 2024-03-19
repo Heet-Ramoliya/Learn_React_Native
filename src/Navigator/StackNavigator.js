@@ -15,6 +15,7 @@ import MyProduct from '../screen/myProduct';
 import TabNavigator from './TabNavigator';
 import AllProducts from '../screen/AllProducts';
 import AddToCart from '../screen/AddToCart';
+import Invoice from '../screen/Invoice';
 
 const Stack = createNativeStackNavigator();
 
@@ -129,6 +130,15 @@ const StackNavigator = () => {
           name="AddToCart"
           component={AddToCart}
           options={{
+            headerShown: true,
+          }}
+        />
+
+        <Stack.Screen
+          name="Invoice"
+          component={Invoice}
+          options={{
+            title: 'Bill Summary',
             headerShown: true,
           }}
         />

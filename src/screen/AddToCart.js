@@ -13,7 +13,7 @@ import db from '../database/database';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
-const AddToCart = () => {
+const AddToCart = ({navigation}) => {
   const [cartitems, setCartitems] = useState([]);
   const [storedUserId, setStoredUserId] = useState('');
 
@@ -84,42 +84,44 @@ const AddToCart = () => {
         </View>
       ) : (
         <>
-          <FlatList
-            data={cartitems}
-            renderItem={({item}) => (
-              <View>
-                <View style={styles.itemContainer}>
-                  <Image source={{uri: item.image}} style={styles.image} />
-                  <View style={styles.itemInfo}>
-                    <Text style={styles.text}>Name: {item.name}</Text>
-                    <Text style={styles.text}>Price: ₹{item.price}</Text>
-                    <Text style={styles.text}>Quantity: {item.quantity}</Text>
-                  </View>
-                  <View>
-                    <TouchableOpacity onPress={() => deleteUser(item.id)}>
-                      <Icon name="delete" size={30} color="black" />
-                    </TouchableOpacity>
+          <ScrollView>
+            <FlatList
+              data={cartitems}
+              renderItem={({item}) => (
+                <View>
+                  <View style={styles.itemContainer}>
+                    <Image source={{uri: item.image}} style={styles.image} />
+                    <View style={styles.itemInfo}>
+                      <Text style={styles.text}>Name: {item.name}</Text>
+                      <Text style={styles.text}>Price: ₹{item.price}</Text>
+                      <Text style={styles.text}>Quantity: {item.quantity}</Text>
+                    </View>
+                    <View>
+                      <TouchableOpacity onPress={() => deleteUser(item.id)}>
+                        <Icon name="delete" size={30} color="black" />
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 </View>
-              </View>
-            )}
-            keyExtractor={(item, index) => index.toString()}
-          />
-          <View style={styles.btn}>
-            <TouchableOpacity onPress={subtotal}>
-              <Text
-                style={{
-                  color: 'black',
-                  fontSize: 18,
-                  textAlign: 'center',
-                  color: 'white',
-                  fontWeight: '500',
-                  padding: 8,
-                }}>
-                Checkout
-              </Text>
-            </TouchableOpacity>
-          </View>
+              )}
+              keyExtractor={(item, index) => index.toString()}
+            />
+            <View style={styles.btn}>
+              <TouchableOpacity onPress={() => navigation.navigate('Invoice')}>
+                <Text
+                  style={{
+                    color: 'black',
+                    fontSize: 18,
+                    textAlign: 'center',
+                    color: 'white',
+                    fontWeight: '500',
+                    padding: 8,
+                  }}>
+                  Payment
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
         </>
       )}
     </View>

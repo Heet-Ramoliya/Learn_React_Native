@@ -1,5 +1,5 @@
 import React from 'react';
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useCallback} from 'react';
 import {View, Text, Image, StyleSheet} from 'react-native';
 import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,26 +16,18 @@ const AllProducts = ({navigation}) => {
   const [storedUserId, setStoredUserId] = useState('');
   const [cartitems, setCartitems] = useState([]);
   const [selectedProductId, setSelectedProductId] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [count, setCount] = useState({});
 
   useEffect(() => {
     getCartItems();
   }, [storedUserId, selectedProductId, cartitems]);
-
-  // const deleteUser = () => {
-  //   db.transaction(tx => {
-  //     tx.executeSql('DELETE FROM Products WHERE id = 8', [], (tx, results) => {
-  //       console.log('User delete successfully!');
-  //     });
-  //   });
-  // };
 
   const getAllProducts = async () => {
     db.transaction(tx => {
       tx.executeSql('SELECT * FROM Products', [], (tx, results) => {
         var temp = [];
         for (let i = 0; i < results.rows.length; ++i) {
-          const productId = results.rows.item(i).id;
-          // console.log('productId ==> ', productId);
           temp.push(results.rows.item(i));
           setAllproduct(temp);
         }
@@ -78,189 +70,74 @@ const AllProducts = ({navigation}) => {
     }, []),
   );
 
-  const [count, setCount] = useState({});
-
-  // const increase = (id, item) => {
-  //   setCount(prevCounts => {
-  //     const updatedCount = (prevCounts[id] || 0) + 1;
-  //     const newCounts = {...prevCounts, [id]: updatedCount};
-  //     insertIntoCartItems(
-  //       storedUserId,
-  //       selectedProductId,
-  //       item.name,
-  //       item.price,
-  //       item.image,
-  //       updatedCount,
-  //     );
-  //     return newCounts;
-  //   });
-  // };
-
-  // const increase = async (id, item) => {
-  //   console.log('------------------------------------------------');
-  //   const updatedCount = (count[id] || 0) + 1;
-  //   const newCounts = {...count, [id]: updatedCount};
-  //   setCount(newCounts);
-
-  //   console.log('cartitems ==> ', cartitems);
-
-  //   const existingCartItem = cartitems.find(
-  //     cartItem => cartItem.productId === item.id,
-  //   );
-  //   console.log('existingCartItem ==> ', existingCartItem);
-  //   // console.log('cartitem id ==> ', cartitems.productId);
-  //   if (existingCartItem) {
-  //     // console.log('existingCartItem');
-  //     updateCartItem(updatedCount, selectedProductId);
-  //     const updatedCartItems = cartitems.map(cartItem =>
-  //       cartItem.productId === item.id
-  //         ? {...cartItem, quantity: updatedCount}
-  //         : cartItem,
-  //     );
-  //     //console.log('updatedCartItems:', updatedCartItems);
-
-  //     setCartitems(updatedCartItems);
-  //   } else {
-  //     insertIntoCartItems(
-  //       storedUserId,
-  //       selectedProductId,
-  //       item.name,
-  //       item.price,
-  //       item.image,
-  //       updatedCount,
-  //     );
-  //   }
-  //   console.log('------------------------------------------------');
-  // };
-
   const increase = async (id, item) => {
-    const updatedCount = (count[id] || 0) + 1;
-    const newCounts = {...count, [id]: updatedCount};
-    setCount(newCounts);
+    setLoading(true);
 
-    const existingCartItemIndex = cartitems.findIndex(
+    const updatedCount = (count[id] || 0) + 1;
+    setCount(prevCounts => ({...prevCounts, [id]: updatedCount}));
+
+    const existingCartItem = cartitems.find(
       cartItem => cartItem.productId === item.id,
     );
 
-    if (existingCartItemIndex !== -1) {
-      const updatedCartItems = cartitems.map((cartItem, index) =>
-        index === existingCartItemIndex
+    if (existingCartItem) {
+      const updatedCartItems = cartitems.map(cartItem =>
+        cartItem.productId === item.id
           ? {...cartItem, quantity: updatedCount}
           : cartItem,
       );
       setCartitems(updatedCartItems);
-      await updateCartItem(updatedCount, storedUserId, item.id);
-      setSelectedProductId(item.id);
+
+      try {
+        await updateCartItem(updatedCount, storedUserId, item.id);
+        setSelectedProductId(item.id);
+      } catch (error) {
+        console.error('Error updating cart item:', error);
+      }
     } else {
-      insertIntoCartItems(
-        storedUserId,
-        item.id,
-        item.name,
-        item.price,
-        item.image,
-        updatedCount,
-      );
-      setSelectedProductId(item.id);
+      try {
+        await insertIntoCartItems(
+          storedUserId,
+          item.id,
+          item.name,
+          item.price,
+          item.image,
+          updatedCount,
+        );
+        setSelectedProductId(item.id);
+      } catch (error) {
+        console.error('Error inserting cart item:', error);
+      }
     }
+    setLoading(false);
   };
 
-  // const decrease = id => {
-  //   setCount(prevCounts => {
-  //     return {...prevCounts, [id]: Math.max((prevCounts[id] || 0) - 1, 0)};
-  //   });
+  const decrease = async (id, item) => {
+    const updatedCount = Math.max((count[id] || 0) - 1, 0);
+    setCount(prevCounts => ({...prevCounts, [id]: updatedCount}));
 
-  //   setCartitems(prevCartItems => {
-  //     return prevCartItems.map(cartItem =>
-  //       cartItem.productId === id
-  //         ? {...cartItem, quantity: Math.max((cartItem.quantity || 0) - 1, 0)}
-  //         : cartItem,
-  //     );
-  //   });
-  // };
-
-  // const decrease = async id => {
-  //   setCount(prevCounts => {
-  //     const updatedCount = Math.max((prevCounts[id] || 0) - 1, 0);
-  //     const newCounts = {...prevCounts, [id]: updatedCount};
-  //     return newCounts;
-  //   });
-
-  //   const existingCartItemIndex = cartitems.findIndex(
-  //     cartItem => cartItem.productId === id,
-  //   );
-
-  //   if (existingCartItemIndex !== -1) {
-  //     const updatedCartItems = cartitems.map((cartItem, index) =>
-  //       index === existingCartItemIndex
-  //         ? {...cartItem, quantity: Math.max(cartItem.quantity - 1, 0)}
-  //         : cartItem,
-  //     );
-  //     setCartitems(updatedCartItems);
-  //     await updateCartItem(
-  //       Math.max(cartitems[existingCartItemIndex].quantity - 1, 0),
-  //       storedUserId,
-  //       id,
-  //     );
-  //   }
-  // };
-
-  const decrease = async id => {
-    setCount(prevCounts => {
-      const updatedCount = Math.max((prevCounts[id] || 0) - 1, 0);
-      const newCounts = {...prevCounts, [id]: updatedCount};
-      return newCounts;
-    });
-
-    const existingCartItemIndex = cartitems.findIndex(
-      cartItem => cartItem.productId === id,
+    const existingCartItem = cartitems.find(
+      cartItem => cartItem.productId === item.id,
     );
 
-    if (existingCartItemIndex !== -1) {
-      const updatedCount = Math.max(
-        cartitems[existingCartItemIndex].quantity - 1,
-        0,
-      );
+    if (existingCartItem) {
       if (updatedCount === 0) {
         const updatedCartItems = cartitems.filter(
-          cartItem => cartItem.productId !== id,
+          cartItem => cartItem.productId !== item.id,
         );
         setCartitems(updatedCartItems);
-        await deleteCartItem(storedUserId, id);
+        await deleteCartItem(storedUserId, item.id);
       } else {
         const updatedCartItems = cartitems.map((cartItem, index) =>
-          index === existingCartItemIndex
+          index === existingCartItem
             ? {...cartItem, quantity: updatedCount}
             : cartItem,
         );
         setCartitems(updatedCartItems);
-        await updateCartItem(updatedCount, storedUserId, id);
+        await updateCartItem(updatedCount, storedUserId, item.id);
       }
     }
   };
-
-  // using updatfunction
-  // const decrease = async id => {
-  //   setCount(prevCounts => {
-  //     return {...prevCounts, [id]: Math.max((prevCounts[id] || 0) - 1, 0)};
-  //   });
-
-  //   const existingCartItem = cartitems.find(
-  //     cartItem => cartItem.productId === id,
-  //   );
-
-  //   if (existingCartItem) {
-  //     const updatedCount = Math.max(existingCartItem.quantity - 1, 0);
-  //     const updatedCartItems = cartitems.map(cartItem =>
-  //       cartItem.productId === id
-  //         ? {...cartItem, quantity: updatedCount}
-  //         : cartItem,
-  //     );
-  //     setCartitems(updatedCartItems);
-
-  //     // Update the quantity in the database
-  //     await updateCartItem(updatedCount, storedUserId, id);
-  //   }
-  // };
 
   return (
     <View>
@@ -294,7 +171,7 @@ const AllProducts = ({navigation}) => {
                       justifyContent: 'center',
                     }}>
                     <TouchableOpacity
-                      onPress={() => decrease(item.id)}
+                      onPress={() => decrease(item.id, item)}
                       style={styles.button}>
                       <Text
                         style={{
@@ -342,21 +219,6 @@ const AllProducts = ({navigation}) => {
                     </TouchableOpacity>
                   </View>
                 </View>
-                {/* <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      insertIntoCartItems(
-                        storedUserId,
-                        item.name,
-                        item.price,
-                        item.image,
-                        count[item.id] || 0,
-                      );
-                      navigation.navigate('AddToCart');
-                    }}>
-                    <Icon name="cart-plus" size={30} color="black" />
-                  </TouchableOpacity>
-                </View> */}
               </View>
             </View>
           </>

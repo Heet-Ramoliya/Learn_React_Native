@@ -53,7 +53,7 @@ export const insertProduct = (userId, name, price, image) => {
 };
 
 //insert Product into CartItems table
-export const insertIntoCartItems = (
+export const insertIntoCartItems = async (
   userId,
   productId,
   name,
@@ -61,7 +61,7 @@ export const insertIntoCartItems = (
   image,
   quantity,
 ) => {
-  db.transaction(tx => {
+  await db.transaction(tx => {
     tx.executeSql(
       'INSERT INTO CartItems (userId,productId,name,price,image,quantity) VALUES (?, ?, ?, ?, ?, ?)',
       [userId, productId, name, price, image, quantity],
