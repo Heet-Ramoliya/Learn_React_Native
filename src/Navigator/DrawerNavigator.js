@@ -33,6 +33,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import AddItems from '../database/AddItems';
 import {View} from 'react-native';
+import MyOrders from '../screen/MyOrders';
 
 const Drawer = createDrawerNavigator();
 
@@ -79,6 +80,7 @@ const DrawerNavigators = ({navigation, route}) => {
         }}
       />
       <Drawer.Screen name="AddItems" component={AddItems} />
+      <Drawer.Screen name="MyOrders" component={MyOrders} />
 
       {/* <Drawer.Screen
         name="ActivityIndicator_task1"

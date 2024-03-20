@@ -85,69 +85,6 @@ const Login = ({navigation}) => {
     navigateForget();
   };
 
-  // const navigateLogin = () => {
-  //   navigation.navigate('SignupPage');
-  // };
-
-  // <View style={{flex: 1, justifyContent: 'center'}}>
-  //   <View>
-  //     <Text style={styles.heading}>Login</Text>
-
-  //     <View style={{paddingHorizontal: 15}}>
-  //       <TextInput
-  //         placeholder="Email"
-  //         placeholderTextColor="black"
-  //         style={styles.formfeild}
-  //         value={email}
-  //         onChangeText={text => setEmail(text)}
-  //       />
-  //       <TextInput
-  //         placeholder="Password"
-  //         placeholderTextColor="black"
-  //         style={styles.formfeild}
-  //         value={password}
-  //         onChangeText={text => setPassword(text)}
-  //         secureTextEntry={true}
-  //       />
-  //       <TouchableOpacity style={{padding: 4}} onPress={ForgatePassword}>
-  //         <Text style={{fontSize: 18, color: 'blue', textAlign: 'center'}}>
-  //           Forgate Password?
-  //         </Text>
-  //       </TouchableOpacity>
-
-  //       <TouchableOpacity
-  //         onPress={handleLogin}
-  //         style={{
-  //           padding: 4,
-  //           backgroundColor: 'blue',
-  //           borderRadius: 100,
-  //           margin: 10,
-  //         }}>
-  //         <Text
-  //           style={{
-  //             fontSize: 18,
-  //             color: 'white',
-  //             textAlign: 'center',
-  //             padding: 5,
-  //             fontWeight: '600',
-  //           }}>
-  //           Login
-  //         </Text>
-  //       </TouchableOpacity>
-  //     </View>
-
-  //     <View style={styles.oneLine}>
-  //       <Text>Don't have an account?</Text>
-  //       <TouchableOpacity
-  //         onPress={() => {
-  //           navigation.navigate('SignupPage');
-  //         }}
-  //         style={{padding: 4}}>
-  //         <Text style={{fontSize: 18, color: 'blue'}}>Signup</Text>
-  //       </TouchableOpacity>
-  //     </View>
-  //   </View>
-  // </View>
   return (
     <KeyboardAwareScrollView
       style={{flexGrow: 1, backgroundColor: 'rgba(249,50,9,255)'}}>
@@ -283,24 +220,6 @@ const Login = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  // formfeild: {
-  //   borderWidth: 2,
-  //   margin: 8,
-  //   padding: 10,
-  // },
-  // heading: {
-  //   fontSize: 32,
-  //   fontWeight: '800',
-  //   color: 'black',
-  //   textAlignVertical: 'center',
-  //   textAlign: 'center',
-  //   marginTop: 20,
-  // },
-  // oneLine: {
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  // },
   main: {
     flex: 1,
     backgroundColor: 'rgba(249,50,9,255)',

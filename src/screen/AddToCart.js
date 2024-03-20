@@ -117,7 +117,7 @@ const AddToCart = ({navigation}) => {
                     fontWeight: '500',
                     padding: 8,
                   }}>
-                  Payment
+                  CheckOut
                 </Text>
               </TouchableOpacity>
             </View>
@@ -153,7 +153,6 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 18,
   },
-
   btn: {
     backgroundColor: 'black',
     margin: 5,

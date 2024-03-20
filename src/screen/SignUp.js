@@ -18,40 +18,12 @@ const SignUp = ({navigation}) => {
   const [Password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  // const storeDate = async () => {
-  //   try {
-  //     await AsyncStorage.setItem('userData', JSON.stringify(userData));
-  //   } catch {
-  //     error => {
-  //       console.log(error);
-  //     };
-  //   }
-  // };
-
-  // const showData = async () => {
-  //   try {
-  //     const jsonvalue = await AsyncStorage.getItem('userData');
-  //     alldata = jsonvalue != null ? JSON.parse(jsonvalue) : null;
-  //     console.log('Stored Data:', alldata);
-  //     return alldata;
-  //   } catch {
-  //     error => {
-  //       console.log(error);
-  //     };
-  //   }
-  // };
-
   const navigateToLogin = () => {
     navigation.navigate('LoginPage');
   };
 
   const handleSignup = () => {
     if (Password === confirmPassword && Password != '' && email != '') {
-      // const userData = {
-      //   email: email,
-      //   password: Password,
-      // };
-
       db.transaction(tx => {
         tx.executeSql(
           'INSERT INTO Users (email,password) VALUES (?, ?)',
@@ -62,7 +34,9 @@ const SignUp = ({navigation}) => {
                 'User signed up successfully',
                 ToastAndroid.SHORT,
               );
-              console.log("User email and password add in database successfully")
+              console.log(
+                'User email and password add in database successfully',
+              );
               navigateToLogin();
             } else {
               ToastAndroid.show('Failed to sign up', ToastAndroid.SHORT);
@@ -83,72 +57,6 @@ const SignUp = ({navigation}) => {
   };
 
   return (
-    // <View style={{flex: 1, justifyContent: 'center'}}>
-    //   <Text style={styles.heading}>Signup</Text>
-
-    //   <View style={{paddingHorizontal: 15}}>
-    //     <TextInput
-    //       placeholder="Email"
-    //       placeholderTextColor="black"
-    //       style={styles.formfeild}
-    //       value={email}
-    //       onChangeText={text => setEmail(text)}
-    //     />
-    //     <TextInput
-    //       placeholder="Create password"
-    //       placeholderTextColor="black"
-    //       style={styles.formfeild}
-    //       value={Password}
-    //       onChangeText={text => setPassword(text)}
-    //     />
-    //     <TextInput
-    //       placeholder="Confirm password"
-    //       placeholderTextColor="black"
-    //       style={styles.formfeild}
-    //       value={confirmPassword}
-    //       onChangeText={text => setConfirmPassword(text)}
-    //     />
-    //     <TouchableOpacity
-    //       // onPress={() => {
-    //       //   Password === confirmPassword && Password != "" && email != "null"
-    //       //     ? allFunction()
-    //       //     : ToastAndroid.show(
-    //       //         'password is not match',
-    //       //         ToastAndroid.SHORT,
-    //       //         ToastAndroid.TOP,
-    //       //       );
-    //       // }}
-    //       onPress={handleSignup}
-    //       style={{
-    //         padding: 4,
-    //         backgroundColor: 'blue',
-    //         borderRadius: 100,
-    //         margin: 10,
-    //       }}>
-    //       <Text
-    //         style={{
-    //           fontSize: 18,
-    //           color: 'white',
-    //           textAlign: 'center',
-    //           padding: 5,
-    //           fontWeight: '600',
-    //         }}>
-    //         Sign Up
-    //       </Text>
-    //     </TouchableOpacity>
-    //   </View>
-
-    //   <View style={styles.oneLine}>
-    //     <Text>Already have an account?</Text>
-    //     <TouchableOpacity
-    //       style={{padding: 4}}
-    //       onPress={() => {
-    //         navigation.navigate('LoginPage');
-    //       }}>
-    //       <Text style={{fontSize: 18, color: 'blue'}}>Login</Text>
-    //     </TouchableOpacity>
-    //   </View>
-    // </View>
     <KeyboardAwareScrollView
       style={{flexGrow: 1, backgroundColor: 'rgba(249,50,9,255)'}}>
       <View style={styles.main}>
@@ -222,24 +130,6 @@ const SignUp = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  // formfeild: {
-  //   borderWidth: 2,
-  //   margin: 8,
-  //   padding: 11,
-  // },
-  // heading: {
-  //   fontSize: 32,
-  //   fontWeight: '800',
-  //   color: 'black',
-  //   textAlignVertical: 'center',
-  //   textAlign: 'center',
-  //   padding: 18,
-  // },
-  // oneLine: {
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  // },
   main: {
     flex: 1,
     backgroundColor: 'rgba(249,50,9,255)',

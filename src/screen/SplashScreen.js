@@ -1,7 +1,7 @@
 import {View, StyleSheet, Image, StatusBar} from 'react-native';
 import React, {useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {createTable} from '../database/dbOperations';
+import {createTable, dropTable} from '../database/dbOperations';
 
 export default function SplashScreen({navigation}) {
   useEffect(() => {
@@ -50,7 +50,5 @@ const styles = StyleSheet.create({
   img: {
     height: 300,
     width: 300,
-    // height: 250,
-    // width: '100%',
   },
 });

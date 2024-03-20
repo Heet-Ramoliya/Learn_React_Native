@@ -5,7 +5,6 @@ import SplashScreen from '../screen/SplashScreen';
 import Home from '../screen/home';
 import SignUp from '../screen/SignUp';
 import Login from '../screen/Login';
-import Welcome from '../screen/welcome';
 import DrawerNavigators from './DrawerNavigator';
 import ForgotScreen from '../screen/Forgot';
 import Menu from '../screen/Menu';
@@ -16,6 +15,7 @@ import TabNavigator from './TabNavigator';
 import AllProducts from '../screen/AllProducts';
 import AddToCart from '../screen/AddToCart';
 import Invoice from '../screen/Invoice';
+import MyOrders from '../screen/MyOrders';
 
 const Stack = createNativeStackNavigator();
 
@@ -60,14 +60,6 @@ const StackNavigator = () => {
           options={{
             title: 'Login',
             headerShown: true,
-          }}
-        />
-        <Stack.Screen
-          name="welcomePage"
-          component={Welcome}
-          options={{
-            title: 'WelcomePage',
-            headerShown: false,
           }}
         />
         <Stack.Screen
@@ -139,6 +131,14 @@ const StackNavigator = () => {
           component={Invoice}
           options={{
             title: 'Bill Summary',
+            headerShown: true,
+          }}
+        />
+
+        <Stack.Screen
+          name="MyOrders"
+          component={MyOrders}
+          options={{
             headerShown: true,
           }}
         />

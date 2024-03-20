@@ -1,4 +1,3 @@
-import {ToastAndroid} from 'react-native/types';
 import db from './database';
 
 //Create Table of database
@@ -33,8 +32,35 @@ export const createTable = () => {
         console.log('Error creating table:', error);
       },
     );
+
+    //Payment Table
+    tx.executeSql(
+      'CREATE TABLE IF NOT EXISTS Payment (id INTEGER PRIMARY KEY AUTOINCREMENT,userId INTEGER,paymentDate Text,totalAmount TEXT,FOREIGN KEY (userId) REFERENCES Users(userId))',
+      [],
+      (tx, results) => {
+        console.log('Payment table create successfully');
+      },
+      error => {
+        console.log('Error creating table:', error);
+      },
+    );
   });
 };
+
+// export const dropTable = () => {
+//   db.transaction(tx => {
+//     tx.executeSql(
+//       'DROP TABLE IF EXISTS Payment',
+//       [],
+//       (tx, results) => {
+//         console.log('MyOrders table dropped successfully');
+//       },
+//       error => {
+//         console.log('Error dropping table:', error);
+//       },
+//     );
+//   });
+// };
 
 //insert Product into database
 export const insertProduct = (userId, name, price, image) => {
@@ -112,18 +138,24 @@ export const deleteCartItem = async (userId, productId) => {
   }
 };
 
-// export const updateUser = (name, price, image, id) => {
-//   db.transaction(tx => {
-//     tx.executeSql(
-//       'UPDATE Users SET name=? , price=? , image=? WHERE id=?',
-//       [name, price, image, id],
-//       (tx, results) => {
-//         if (results.rowsAffected > 0) {
-//           console.log('User updated successfully!');
-//         } else {
-//           console.log('User not found or no changes made');
-//         }
-//       },
-//     );
-//   });
-// };
+//insert PaymentDetails
+export const insertPayment = (userId, paymentDate, totalAmount) => {
+  try {
+    db.transaction(tx => {
+      tx.executeSql(
+        'INSERT INTO Payment (userId,paymentDate,totalAmount) VALUES (?, ?, ?)',
+        [userId, paymentDate, totalAmount],
+        (tx, results) => {
+          if (results.rowsAffected > 0) {
+            console.log('Payment inserted successfully');
+            console.warn('Payment inserted successfully');
+          } else {
+            console.log('Failed to insert payment');
+          }
+        },
+      );
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};

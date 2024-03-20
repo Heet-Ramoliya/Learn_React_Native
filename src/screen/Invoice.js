@@ -1,13 +1,21 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import db from '../database/database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import {insertPayment} from '../database/dbOperations';
 
 const Invoice = () => {
   const [storedUserId, setStoredUserId] = useState('');
   const [cartitems, setCartitems] = useState([]);
   const [email, setEmail] = useState([]);
+
+  const {name, price, image, quantity} = cartitems;
 
   useEffect(() => {
     getUserIdFromStorage();
@@ -77,61 +85,83 @@ const Invoice = () => {
   const formattedDate = `${day}-${month}-${year}`;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Invoice</Text>
-      </View>
-      <View style={styles.invoiceInfoContainer}>
-        <View style={styles.invoiceInfo}>
-          <Text style={styles.label}>Invoice Number:</Text>
-          <Text style={styles.text}>{invoiceData.invoiceNumber}</Text>
+    <ScrollView>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Invoice</Text>
         </View>
-        <View style={styles.invoiceInfo}>
-          <Text style={styles.label}>Invoice Date:</Text>
-          <Text style={styles.text}>{formattedDate}</Text>
+        <View style={styles.invoiceInfoContainer}>
+          <View style={styles.invoiceInfo}>
+            <Text style={styles.label}>Invoice Number:</Text>
+            <Text style={styles.text}>{invoiceData.invoiceNumber}</Text>
+          </View>
+          <View style={styles.invoiceInfo}>
+            <Text style={styles.label}>Invoice Date:</Text>
+            <Text style={styles.text}>{formattedDate}</Text>
+          </View>
         </View>
-      </View>
-      <View style={styles.divider} />
-      <View style={styles.customerInfoContainer}>
-        <Text style={styles.subtitle}>Customer Information</Text>
-        <View style={styles.customerInfo}>
-          <Text style={styles.label}>Name:</Text>
-          <Text style={styles.text}>{invoiceData.customerName}</Text>
-        </View>
-        {email.map((user, index) => (
-          <View key={index}>
-            <View style={styles.customerInfo}>
-              <Text style={styles.label}>Email:</Text>
-              <Text style={styles.text}>{user.email}</Text>
+        <View style={styles.divider} />
+        <View style={styles.customerInfoContainer}>
+          <Text style={styles.subtitle}>Customer Information</Text>
+          <View style={styles.customerInfo}>
+            <Text style={styles.label}>Name:</Text>
+            <Text style={styles.text}>{invoiceData.customerName}</Text>
+          </View>
+          {email.map((user, index) => (
+            <View key={index}>
+              <View style={styles.customerInfo}>
+                <Text style={styles.label}>Email:</Text>
+                <Text style={styles.text}>{user.email}</Text>
+              </View>
             </View>
+          ))}
+          <View style={styles.customerInfo}>
+            <Text style={styles.label}>Address:</Text>
+            <Text style={styles.text}>{invoiceData.customerAddress}</Text>
           </View>
-        ))}
-        <View style={styles.customerInfo}>
-          <Text style={styles.label}>Address:</Text>
-          <Text style={styles.text}>{invoiceData.customerAddress}</Text>
+        </View>
+        <View style={styles.divider} />
+        <View style={styles.itemsContainer}>
+          <Text style={styles.subtitle}>Invoice Items</Text>
+          {cartitems.map(item => (
+            <View style={styles.item} key={item.id}>
+              <Text style={styles.itemName}>{item.name}</Text>
+              <Text style={styles.itemDetails}>
+                {item.quantity} x ₹{item.price}
+              </Text>
+              <Text style={styles.itemTotal}>
+                ₹{item.quantity * item.price}
+              </Text>
+            </View>
+          ))}
+        </View>
+        <View style={styles.divider} />
+        <View style={styles.totalContainer}>
+          <Text style={{fontSize: 18, color: 'black', fontWeight: 'bold'}}>
+            Total:
+          </Text>
+          <Text style={styles.total}> ₹{total}</Text>
+        </View>
+        <View style={styles.btn}>
+          <TouchableOpacity
+            onPress={() => {
+              insertPayment(storedUserId, formattedDate, total);
+            }}>
+            <Text
+              style={{
+                color: 'black',
+                fontSize: 18,
+                textAlign: 'center',
+                color: 'white',
+                fontWeight: '500',
+                padding: 8,
+              }}>
+              Payment
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
-      <View style={styles.divider} />
-      <View style={styles.itemsContainer}>
-        <Text style={styles.subtitle}>Invoice Items</Text>
-        {cartitems.map(item => (
-          <View style={styles.item} key={item.id}>
-            <Text style={styles.itemName}>{item.name}</Text>
-            <Text style={styles.itemDetails}>
-              {item.quantity} x ₹{item.price}
-            </Text>
-            <Text style={styles.itemTotal}>₹ {item.quantity * item.price}</Text>
-          </View>
-        ))}
-      </View>
-      <View style={styles.divider} />
-      <View style={styles.totalContainer}>
-        <Text style={{fontSize: 18, color: 'black', fontWeight: 'bold'}}>
-          Total:
-        </Text>
-        <Text style={styles.total}> ₹{total}</Text>
-      </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -208,6 +238,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: 'black',
+  },
+  btn: {
+    backgroundColor: 'black',
+    margin: 5,
+    padding: 5,
+    borderRadius: 100,
+    marginTop: 35,
   },
 });
 
