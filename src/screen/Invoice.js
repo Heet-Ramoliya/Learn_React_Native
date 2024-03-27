@@ -69,6 +69,8 @@ const Invoice = ({navigation}) => {
     total += item.price * item.quantity;
   });
 
+  console.log('Total ==> ', total);
+
   const invoiceData = {
     invoiceNumber: '1',
     customerName: 'Heet Ramoliya',
