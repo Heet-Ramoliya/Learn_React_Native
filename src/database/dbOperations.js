@@ -34,11 +34,23 @@ export const createTable = () => {
     );
 
     //Payment Table
+    // tx.executeSql(
+    //   'CREATE TABLE IF NOT EXISTS Payment (id INTEGER PRIMARY KEY AUTOINCREMENT,userId INTEGER,paymentDate Text,totalAmount TEXT,FOREIGN KEY (userId) REFERENCES Users(userId))',
+    //   [],
+    //   (tx, results) => {
+    //     console.log('Payment table create successfully');
+    //   },
+    //   error => {
+    //     console.log('Error creating table:', error);
+    //   },
+    // );
+
+    //Myorders Table
     tx.executeSql(
-      'CREATE TABLE IF NOT EXISTS Payment (id INTEGER PRIMARY KEY AUTOINCREMENT,userId INTEGER,paymentDate Text,totalAmount TEXT,FOREIGN KEY (userId) REFERENCES Users(userId))',
+      'CREATE TABLE IF NOT EXISTS Myorders (id INTEGER PRIMARY KEY AUTOINCREMENT,userId INTEGER,name TEXT,price TEXT,image TEXT,quantity INTEGER,paymentDate Text,FOREIGN KEY (userId) REFERENCES Users(userId))',
       [],
       (tx, results) => {
-        console.log('Payment table create successfully');
+        console.log('Myorders table create successfully');
       },
       error => {
         console.log('Error creating table:', error);
@@ -139,23 +151,46 @@ export const deleteCartItem = async (userId, productId) => {
 };
 
 //insert PaymentDetails
-export const insertPayment = (userId, paymentDate, totalAmount) => {
-  try {
-    db.transaction(tx => {
-      tx.executeSql(
-        'INSERT INTO Payment (userId,paymentDate,totalAmount) VALUES (?, ?, ?)',
-        [userId, paymentDate, totalAmount],
-        (tx, results) => {
-          if (results.rowsAffected > 0) {
-            console.log('Payment inserted successfully');
-            console.warn('Payment inserted successfully');
-          } else {
-            console.log('Failed to insert payment');
-          }
-        },
-      );
-    });
-  } catch (error) {
-    console.log(error);
-  }
+// export const insertPayment = (userId, paymentDate, totalAmount) => {
+//   try {
+//     db.transaction(tx => {
+//       tx.executeSql(
+//         'INSERT INTO Payment (userId,paymentDate,totalAmount) VALUES (?, ?, ?)',
+//         [userId, paymentDate, totalAmount],
+//         (tx, results) => {
+//           if (results.rowsAffected > 0) {
+//             console.log('Payment inserted successfully');
+//             console.warn('Payment inserted successfully');
+//           } else {
+//             console.log('Failed to insert payment');
+//           }
+//         },
+//       );
+//     });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+
+//insert payment data into Myorders
+export const insertIntoMyorders = async (
+  userId,
+  name,
+  price,
+  image,
+  quantity,
+  paymentDate,
+) => {
+  await db.transaction(tx => {
+    tx.executeSql(
+      'INSERT INTO Myorders(userId,name,price,image,quantity,paymentDate) VALUES (?, ?, ?, ?, ?, ?)',
+      [userId, name, price, image, quantity, paymentDate],
+      (tx, results) => {
+        console.log('Product add into Myorders successfully');
+      },
+      error => {
+        console.log('Error inserting record:', error);
+      },
+    );
+  });
 };

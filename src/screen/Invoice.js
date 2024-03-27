@@ -8,14 +8,12 @@ import {
 } from 'react-native';
 import db from '../database/database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {insertPayment} from '../database/dbOperations';
+import {insertIntoMyorders, insertPayment} from '../database/dbOperations';
 
-const Invoice = () => {
+const Invoice = ({navigation}) => {
   const [storedUserId, setStoredUserId] = useState('');
   const [cartitems, setCartitems] = useState([]);
   const [email, setEmail] = useState([]);
-
-  const {name, price, image, quantity} = cartitems;
 
   useEffect(() => {
     getUserIdFromStorage();
@@ -123,7 +121,7 @@ const Invoice = () => {
         <View style={styles.divider} />
         <View style={styles.itemsContainer}>
           <Text style={styles.subtitle}>Invoice Items</Text>
-          {cartitems.map(item => (
+          {cartitems.map((item, index) => (
             <View style={styles.item} key={item.id}>
               <Text style={styles.itemName}>{item.name}</Text>
               <Text style={styles.itemDetails}>
@@ -145,7 +143,17 @@ const Invoice = () => {
         <View style={styles.btn}>
           <TouchableOpacity
             onPress={() => {
-              insertPayment(storedUserId, formattedDate, total);
+              cartitems.forEach(item => {
+                insertIntoMyorders(
+                  storedUserId,
+                  item.name,
+                  item.price,
+                  item.image,
+                  item.quantity,
+                  formattedDate,
+                );
+                navigation.navigate('DrawerNavigators');
+              });
             }}>
             <Text
               style={{

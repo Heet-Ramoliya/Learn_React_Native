@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import db from '../database/database';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {insertIntoMyorders, insertPayment} from '../database/dbOperations';
 
 const AddToCart = ({navigation}) => {
   const [cartitems, setCartitems] = useState([]);
@@ -62,13 +63,17 @@ const AddToCart = ({navigation}) => {
     });
   };
 
-  const subtotal = () => {
-    let total = 0;
-    cartitems.forEach(item => {
-      total += item.price * item.quantity;
-    });
-    console.log('SubTotal ==> ', total);
-  };
+  let total = 0;
+  cartitems.forEach(item => {
+    total += item.price * item.quantity;
+  });
+
+  const currentDate = new Date();
+  const day = currentDate.getDate();
+  const month = currentDate.getMonth() + 1;
+  const year = currentDate.getFullYear();
+
+  const formattedDate = `${day}-${month}-${year}`;
 
   return (
     <View>
@@ -107,7 +112,10 @@ const AddToCart = ({navigation}) => {
               keyExtractor={(item, index) => index.toString()}
             />
             <View style={styles.btn}>
-              <TouchableOpacity onPress={() => navigation.navigate('Invoice')}>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('Invoice');
+                }}>
                 <Text
                   style={{
                     color: 'black',
